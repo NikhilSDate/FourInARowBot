@@ -16,14 +16,10 @@ class DiscordGameManager:
     def remove_game(self, channel: Messageable):
         del self.games[channel]
 
-    def do_move(self, channel, player_id, column) -> Status:
+    def do_move(self, channel: Messageable, player_id: str, column: int) -> Status:
         if channel not in self.games or player_id not in self.games[channel].players:
             return Status.NO_ACTIVE_GAME
-        return self.games[channel].do_move(column, self.games[channel].get_color(player_id))
+        return self.games[channel].do_move(column, self.games[channel].get_player_color(player_id))
 
-
-
-
-
-
-DiscordGameManager()
+    async def print_board(self, channel: Messageable):
+        await channel.send(self.games[channel].to_message())
