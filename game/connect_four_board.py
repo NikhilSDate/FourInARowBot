@@ -1,38 +1,45 @@
-from typing import Tuple
-
-from numpy._typing import NDArray
-
-from colors import Color
+from typing import Tuple, Sequence
+from numpy.typing import NDArray
+from game.colors import Color
 import numpy as np
-
-from game.game_states import GameState
 from game.statuses import Status
 
 
 class ConnectFourBoard:
     def __init__(self, dims: tuple = (6, 7)):
-        self._board = np.zeros(shape=dims, dtype=Status)
-        self._envelope = np.zeros(shape=(dims[0],))
+        self._board = np.full(shape=dims, fill_value=Color.EMPTY, dtype=object)
+        self._envelope = np.zeros(shape=(dims[0],), dtype=int)
 
     @property
-    def shape(self) -> Tuple[int]:
+    def shape(self) -> Tuple[int, int]:
         return self._board.shape
 
-    def do_move(self, color: Color, column: int) -> Status:
+    def envelope(self, column):
+        if not column >= 0 and column < self.shape[1]:
+            raise ValueError('column must be a valid column index')
+        return self._envelope[column]
+
+    def do_move(self, column: int, color: Color) -> Status:
         if not column >= 0 and column < self.shape[1]:
             raise ValueError('column must be a valid column index')
         if self._envelope[column] == self.shape[0]:
             return Status.COLUMN_FULL
-
-        self._board[self._envelope[column]] = color
+        self._board[self._envelope[column]][column] = color
         self._envelope[column] += 1
         return Status.OK
+
+    def do_moves(self, moves: Sequence[Tuple[int, Color]]) -> Tuple[int, Status]:
+        for i, move in enumerate(moves):
+            status = self.do_move(*move)
+            if status != Status.OK:
+                return i, status
+        return len(moves), Status.OK
 
     def full(self) -> bool:
         # TODO: can be optimized
         return np.min(self._envelope) == self.shape[0]
 
-    def eval_game_state(self, loc: Tuple[int], color: Color, winning_length: int = 4) -> bool:
+    def eval_game_state(self, loc: Tuple[int, int], color: Color, winning_length: int = 4) -> bool:
         '''
         Returns true if color wins and false otherwise
         :param loc:
@@ -92,13 +99,12 @@ class ConnectFourBoard:
 
         # right to left diagonal
         isum = loc[0] + loc[1]
-
         left_lim = max(0, isum - (self.shape[1] - 1), loc[0] - (winning_length - 1))
-        right_lim = min(self.shape[0], offset + 1, loc[0] + winning_length)
-
+        right_lim = min(self.shape[0], isum + 1, loc[0] + winning_length)
         rl_diag = np.array([self._board[i, isum - i] for i in range(left_lim, right_lim)], dtype=Color)
         max_run = eval_max_run_length(rl_diag, color)
         if max_run >= winning_length:
             return True
 
         return False
+
