@@ -18,7 +18,7 @@ class DiscordGame(Game):
         message = ''
         # flip board upside down
         for i in range(self.board.shape[0] - 1, -1, -1):
-            for j in range(self.board.shape[1] - 1, -1, -1):
+            for j in range(self.board.shape[1]):
                 message += emojis[self.board.shape[i][j]]
             message += '\n'
         return message
