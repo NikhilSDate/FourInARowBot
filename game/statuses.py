@@ -8,3 +8,4 @@ class Status(Enum):
     FIRST_WINS = 3
     SECOND_WINS = 4
     DRAW = 5
+    NO_ACTIVE_GAME = 6
