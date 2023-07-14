@@ -8,7 +8,7 @@ from game.statuses import Status
 class ConnectFourBoard:
     def __init__(self, dims: tuple = (6, 7)):
         self._board = np.full(shape=dims, fill_value=Color.EMPTY, dtype=object)
-        self._envelope = np.zeros(shape=(dims[0],), dtype=int)
+        self._envelope = np.zeros(shape=(dims[1],), dtype=int)
 
     @property
     def shape(self) -> Tuple[int, int]:
@@ -108,3 +108,5 @@ class ConnectFourBoard:
 
         return False
 
+    def __getitem__(self, index):
+        return self._board[index]
