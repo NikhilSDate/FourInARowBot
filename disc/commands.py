@@ -23,7 +23,7 @@ error_messages = {Status.CHANNEL_BUSY: 'A game is currently in progress in this 
                   }
 
 @bot.command()
-async def newgame(ctx: Context, other_player: str, mode='random'):
+async def newgame(ctx: Context, other_player: str, mode='random', rows: int = 6, columns: int = 7, winning_length: int = 4):
     id_regex = re.compile('^<@(.+)>$')
     author_id = str(ctx.author.id)
     other_player_id = id_regex.match(other_player).group(1)
@@ -40,7 +40,7 @@ async def newgame(ctx: Context, other_player: str, mode='random'):
         return
 
     status = await game_manager.new_game(channel=ctx.channel, first_player_id=ids[0],
-                                   second_player_id=ids[1])
+                                   second_player_id=ids[1], dims=(rows, columns), winning_length=winning_length)
 
     if status != Status.OK:
         await ctx.send(error_messages[status])
@@ -63,7 +63,6 @@ async def move(ctx: Context, one_indexed_column: int):
 
 @bot.command()
 async def resign(ctx: Context):
-    print('resign')
     status = await game_manager.handle_resign(ctx.channel, str(ctx.author.id))
     if status in StatusType.ERROR:
         await ctx.send(error_messages[status])

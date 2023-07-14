@@ -8,8 +8,8 @@ from game.statuses import Status, StatusError, StatusType
 
 
 class DiscordGame(Game):
-    def __init__(self, dims: Tuple[int, int] = (6, 7), channel=None, first_player_id: str = None, second_player_id: str = None):
-        super().__init__(dims)
+    def __init__(self, dims: Tuple[int, int] = (6, 7), winning_length: int = 4, channel=None, first_player_id: str = None, second_player_id: str = None):
+        super().__init__(dims, winning_length)
         self.players = {first_player_id: Color.FIRST, second_player_id: Color.SECOND}
         self.colors = {Color.FIRST: 'RED', Color.SECOND: 'BLUE'}
         self.channel = channel

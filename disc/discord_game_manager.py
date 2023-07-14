@@ -10,10 +10,10 @@ class DiscordGameManager:
     def __init__(self):
         self.games: Dict[Messageable, DiscordGame] = {}
 
-    async def new_game(self, channel: Messageable, first_player_id: str, second_player_id: str, dims: Tuple[int, int] = (6, 7)) -> Status:
+    async def new_game(self, channel: Messageable, first_player_id: str, second_player_id: str, dims: Tuple[int, int] = (6, 7), winning_length: int = 4) -> Status:
         if channel in self.games:
             return Status.CHANNEL_BUSY
-        self.games[channel] = DiscordGame(dims=dims, channel=channel, first_player_id=first_player_id, second_player_id=second_player_id)
+        self.games[channel] = DiscordGame(dims=dims, winning_length = winning_length, channel=channel, first_player_id=first_player_id, second_player_id=second_player_id)
         await channel.send(self.games[channel].color_assignment_to_message())
         return Status.OK
 

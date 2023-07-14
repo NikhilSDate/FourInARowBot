@@ -7,10 +7,11 @@ from game.statuses import Status, StatusError
 
 class Game:
 
-    def __init__(self, dims: Tuple[int, int] = (6, 7)):
+    def __init__(self, dims: Tuple[int, int] = (6, 7), winning_length: int = 4):
         self.board = ConnectFourBoard(dims)
         self.moves = []
         self.status: Status = Status.OK
+        self.winning_length = winning_length
 
     def do_move(self, column: int, color: Optional[Color] = None) -> Status:
         if self.status != Status.OK:
@@ -31,7 +32,7 @@ class Game:
         else:
             return status
 
-        if self.board.eval_game_state((self.board.envelope(column) - 1, column), color):
+        if self.board.eval_game_state((self.board.envelope(column) - 1, column), color, winning_length=self.winning_length):
             if color == Color.FIRST:
                 self.status = Status.FIRST_WINS_BY_POSITION
                 return Status.FIRST_WINS_BY_POSITION
