@@ -3,12 +3,14 @@ from typing import Dict, Tuple
 from discord.abc import Messageable
 
 from disc.discord_game import DiscordGame
+from disc.discord_match import DiscordMatch
 from game.statuses import Status
 
 
-class DiscordGameManager:
+class DiscordManager:
     def __init__(self):
         self.games: Dict[Messageable, DiscordGame] = {}
+        self.matches: Dict[Messageable, DiscordMatch] = {}
 
     async def new_game(self, channel: Messageable, first_player_id: str, second_player_id: str, dims: Tuple[int, int] = (6, 7), winning_length: int = 4) -> Status:
         if channel in self.games:
@@ -16,6 +18,10 @@ class DiscordGameManager:
         self.games[channel] = DiscordGame(dims=dims, winning_length = winning_length, channel=channel, first_player_id=first_player_id, second_player_id=second_player_id)
         await channel.send(self.games[channel].color_assignment_to_message())
         return Status.OK
+
+    async def new_match(self, channel: Messageable, first_player_id: str, second_player_id: str, dims: Tuple[int, int] = (6, 7), winning_length: int = 4):
+        pass
+
 
     def remove_game(self, channel: Messageable):
         del self.games[channel]

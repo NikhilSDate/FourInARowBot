@@ -10,6 +10,8 @@ from game.statuses import Status, StatusError, StatusType
 class DiscordGame(Game):
     def __init__(self, dims: Tuple[int, int] = (6, 7), winning_length: int = 4, channel=None, first_player_id: str = None, second_player_id: str = None):
         super().__init__(dims, winning_length)
+        self.first_player_id = first_player_id
+        self.second_player_id = second_player_id
         self.players = {first_player_id: Color.FIRST, second_player_id: Color.SECOND}
         self.colors = {Color.FIRST: 'RED', Color.SECOND: 'BLUE'}
         self.channel = channel
@@ -50,6 +52,8 @@ class DiscordGame(Game):
     def result_to_message(self) -> str:
         if self.status not in StatusType.GAME_OVER:
             raise StatusError('Game must be over to convert result to message.')
+        ping_first = ping(self.first_player_id)
+        ping_second = ping(self.second_player_id)
         if self.status == Status.FIRST_WINS_BY_POSITION:
             return f'Game over! {self.colors[Color.FIRST]} wins!'
         elif self.status == Status.SECOND_WINS_BY_POSITION:
