@@ -110,3 +110,13 @@ class ConnectFourBoard:
 
     def __getitem__(self, index):
         return self._board[index]
+
+    # ai methods
+
+    def actions(self) -> Sequence[int]:
+        return [i for i in range(self.shape[1]) if self._envelope[i] < self.shape[0]]
+
+    @property
+    def board(self):
+        return self._board
+

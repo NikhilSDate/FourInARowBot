@@ -14,6 +14,7 @@ class Status(Enum):
     NO_ACTIVE_GAME = 7
     INVALID_INDEX = 8
     CHANNEL_BUSY = 9
+    AI_BUSY = 10
 
 
 class StatusType(set, Enum):
