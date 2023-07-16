@@ -9,7 +9,7 @@ from game.connect_four_board import ConnectFourBoard
 
 
 def run_evaluation(run_length, num_open):
-    if run_length == 4:
+    if run_length >= 4:
         return np.inf
 
     if num_open == 0:
@@ -83,8 +83,15 @@ def evaluation_function(board: ConnectFourBoard):
     return color_evaluation(Color.FIRST) - color_evaluation(Color.SECOND)
 
 
-def actions(board: ConnectFourBoard):
-    return [i for i in range(board.shape[1]) if board.envelope(i) != board.shape[0]]
+def actions(board: ConnectFourBoard, color: Color):
+    action_list = [i for i in range(board.shape[1]) if board.envelope(i) != board.shape[0]]
+    return action_list
+    # key = {}
+    # for action in action_list:
+    #     result = copy.deepcopy(board)
+    #     result.do_move(action, color)
+    #     key[action] = evaluation_function(result)
+    # return sorted(action_list, key=lambda i: key[i])
 
 
 def terminal(board: ConnectFourBoard, loc) -> bool:
@@ -92,7 +99,7 @@ def terminal(board: ConnectFourBoard, loc) -> bool:
 
 
 def cutoff_test(board: ConnectFourBoard, loc, depth) -> bool:
-    return loc is not None and terminal(board, loc) or depth > 7
+    return loc is not None and terminal(board, loc) or depth > 5
 
 
 def alpha_beta_search(board: ConnectFourBoard, color: Color) -> Tuple[float, int]:
@@ -108,7 +115,7 @@ def max_value(board: ConnectFourBoard, alpha: float, beta: float, previous_loc, 
         return evaluation_function(board), -1
     v = -np.inf
     best_action = None
-    for action in actions(board):
+    for action in actions(board, Color.FIRST):
         loc = (board.envelope(action), action)
         result = copy.deepcopy(board)
         result.do_move(action, Color.FIRST)
@@ -127,7 +134,7 @@ def min_value(board: ConnectFourBoard, alpha: float, beta: float, previous_loc, 
         return evaluation_function(board), -1
     v = np.inf
     best_action = None
-    for action in actions(board):
+    for action in actions(board, Color.SECOND):
         loc = (board.envelope(action), action)
         result = copy.deepcopy(board)
         result.do_move(action, Color.SECOND)
@@ -137,9 +144,13 @@ def min_value(board: ConnectFourBoard, alpha: float, beta: float, previous_loc, 
             v = max_val
         if v <= alpha:
             return v, action
-        beta = min(alpha, v)
+        beta = min(beta, v)
     return v, best_action
 
 
-game_board = ConnectFourBoard()
-print(alpha_beta_search(game_board, Color.FIRST))
+board = ConnectFourBoard()
+board.do_moves([(2, Color.FIRST),
+                (6, Color.SECOND),
+                (3, Color.FIRST)])
+print(board.board)
+print(alpha_beta_search(board, Color.SECOND))

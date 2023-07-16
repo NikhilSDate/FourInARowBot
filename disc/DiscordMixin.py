@@ -2,15 +2,14 @@ import warnings
 
 from disc.utils import ping
 from game.colors import Color
-from game.statuses import Status, StatusError
+from game.statuses import Status, StatusError, StatusType
 
 
 class DiscordMixin:
     def get_player_color(self, player_id: str) -> Color:
         return self.players[player_id]
 
-    def handle_resign(self, player_id: str):
-        super().handle_resign(self.players[player_id])
+
 
     def to_message(self) -> str:
         # try to add column numbers

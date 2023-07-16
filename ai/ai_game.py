@@ -4,7 +4,7 @@ from typing import Tuple, Optional
 from game.colors import Color
 from game.game import Game
 from game.statuses import Status, StatusType
-from minimax import alpha_beta_search
+from ai.minimax import alpha_beta_search
 
 
 class AIGame(Game):
@@ -26,6 +26,7 @@ class AIGame(Game):
         if status != Status.OK:
             return status
 
+    def do_ai_move(self):
         evaluation, best_move = alpha_beta_search(self.board, self.ai_color)
         status = super().do_move(best_move, self.ai_color)
         return status
