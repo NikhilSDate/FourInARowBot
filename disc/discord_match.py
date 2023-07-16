@@ -16,6 +16,7 @@ class DiscordMatch:
         self.channel = channel
         self.first_player_id = first_player_id
         self.second_player_id = second_player_id
+        self.players = {first_player_id, second_player_id}
         self._games = []
         for i in range(num_games):
             if i % 2 == 0:
