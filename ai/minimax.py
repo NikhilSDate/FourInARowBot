@@ -83,7 +83,7 @@ def evaluation_function(board: ConnectFourBoard):
     return color_evaluation(Color.FIRST) - color_evaluation(Color.SECOND)
 
 
-def actions(board: ConnectFourBoard, color: Color):
+def actions(board: ConnectFourBoard):
     action_list = [i for i in range(board.shape[1]) if board.envelope(i) != board.shape[0]]
     return action_list
     # key = {}
@@ -115,12 +115,13 @@ def max_value(board: ConnectFourBoard, alpha: float, beta: float, previous_loc, 
         return evaluation_function(board), -1
     v = -np.inf
     best_action = None
-    for action in actions(board, Color.FIRST):
-        loc = (board.envelope(action), action)
+    for action in actions(board):
         result = copy.deepcopy(board)
         result.do_move(action, Color.FIRST)
+        loc = (result.envelope(action) - 1, action)
         min_val = min_value(result, alpha, beta, loc, depth + 1)[0]
-        if min_val >= v:
+
+        if min_val > v:
             best_action = action
             v = min_val
         if v >= beta:
@@ -134,12 +135,12 @@ def min_value(board: ConnectFourBoard, alpha: float, beta: float, previous_loc, 
         return evaluation_function(board), -1
     v = np.inf
     best_action = None
-    for action in actions(board, Color.SECOND):
-        loc = (board.envelope(action), action)
+    for action in actions(board):
         result = copy.deepcopy(board)
         result.do_move(action, Color.SECOND)
+        loc = (result.envelope(action) - 1, action)
         max_val = max_value(result, alpha, beta, loc, depth + 1)[0]
-        if max_val <= v:
+        if max_val < v:
             best_action = action
             v = max_val
         if v <= alpha:
@@ -148,9 +149,8 @@ def min_value(board: ConnectFourBoard, alpha: float, beta: float, previous_loc, 
     return v, best_action
 
 
-board = ConnectFourBoard()
-board.do_moves([(2, Color.FIRST),
-                (6, Color.SECOND),
-                (3, Color.FIRST)])
-print(board.board)
-print(alpha_beta_search(board, Color.SECOND))
+# board = ConnectFourBoard()
+# board.do_moves([(2, Color.FIRST),
+#                 (6, Color.SECOND),
+#                 (3, Color.FIRST),
+# ])

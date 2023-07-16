@@ -24,6 +24,7 @@ error_messages = {Status.CHANNEL_BUSY: 'A game is currently in progress in this 
                   Status.COLUMN_FULL: 'The column you are trying to play your piece in is full.',
                   }
 
+
 @bot.command()
 async def newgame(ctx: Context, other_player: str, mode='random', rows: int = 6, columns: int = 7, winning_length: int = 4):
     id_regex = re.compile('^<@(.+)>$')
@@ -90,6 +91,7 @@ async def resign(ctx: Context):
     status = await game_manager.handle_resign(ctx.channel, str(ctx.author.id))
     if status in StatusType.ERROR:
         await ctx.send(error_messages[status])
+
 
 
 
