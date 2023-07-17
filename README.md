@@ -38,7 +38,7 @@ only one game can be played at a time in a single channel.
 ![](media/custom_board.png)
 
 ## Video demo
-
+https://github.com/NikhilSDate/ConnectFourBot/assets/47920034/9087e355-ea45-44b0-a305-4e23edfa9a4a
 
 
 
