@@ -23,22 +23,22 @@ https://github.com/NikhilSDate/ConnectFourBot/assets/47920034/9087e355-ea45-44b0
 ## Screenshots
 
 ### A user initiating a game
-![](media/game_start.png)
+![game start](media/game_start.png)
 
 ### A game in progress
 
-![](media/game_in_progress.png)
+![game in progress](media/game_in_progress.png)
 
 ### A player resigning a game
 
-![](media/resign.png)
+![resign](media/resign.png)
 
 ### A player initiating a game and choosing to start second
-![](media/starting_second.png)
+![starting second](media/starting_second.png)
 
 ### A game with a custom board size (8 rows and 8 columns)
 
-![](media/custom_board.png)
+![8x8 board](media/custom_board.png)
 
 
 
