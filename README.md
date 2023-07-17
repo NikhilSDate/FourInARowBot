@@ -17,6 +17,9 @@ only one game can be played at a time in a single channel.
 * The bot detects and correctly handles invalid moves (such as a move by a player when it's not their turn, a move 
   in a column that's full, a move by a user who's not a participant in an active game)
 
+## Video demo
+https://github.com/NikhilSDate/ConnectFourBot/assets/47920034/9087e355-ea45-44b0-a305-4e23edfa9a4a
+
 ## Screenshots
 
 ### A user initiating a game
@@ -36,9 +39,6 @@ only one game can be played at a time in a single channel.
 ### A game with a custom board size (8 rows and 8 columns)
 
 ![](media/custom_board.png)
-
-## Video demo
-https://github.com/NikhilSDate/ConnectFourBot/assets/47920034/9087e355-ea45-44b0-a305-4e23edfa9a4a
 
 
 
