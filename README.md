@@ -18,7 +18,8 @@ only one game can be played at a time in a single channel.
   in a column that's full, a move by a user who's not a participant in an active game)
 
 ## Video demo
-https://github.com/NikhilSDate/ConnectFourBot/assets/47920034/9087e355-ea45-44b0-a305-4e23edfa9a4a
+
+https://github.com/NikhilSDate/FourInARowBot/assets/47920034/8dfe280b-bb10-4135-884b-9693179681fe
 
 ## Screenshots
 
