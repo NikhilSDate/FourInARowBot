@@ -6,14 +6,14 @@ from discord.ext import commands
 from discord.ext.commands import Context
 
 from dotenv import load_dotenv
-from disc.discord_game_manager import DiscordManager
+from disc.discord_game_manager import DiscordGameManager
 from game.statuses import Status, StatusType
 
 load_dotenv()
 
 intents = Intents.all()
 bot = commands.Bot(command_prefix="!", intents=intents)
-game_manager = DiscordManager()
+game_manager = DiscordGameManager()
 
 error_messages = {Status.CHANNEL_BUSY: 'A game is currently in progress in this channel.',
                   Status.NO_ACTIVE_GAME: 'You are not a participant in an active game in this channel.',
