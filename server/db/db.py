@@ -1,4 +1,5 @@
 import datetime
+import pprint
 
 from flask import Flask
 from flask_pymongo import PyMongo
@@ -12,7 +13,7 @@ from pymongo.cursor import Cursor
 # "first_player_id": string (can be 'ai')
 # "second_player_id": string (can be 'ai')
 # "moves": string
-# "result": integer (0 is draw by full board, 1 is draw by agreement, 2 is first player wins by position, 3 is first player wins by resignation, 4 is second player wins by position, 5 is second player wins by resignation"
+# "result": integer (0 is draw by full board, 1 is first player wins by position, 2 is first player wins by resignation, -1 is second player wins by position, -2 is second player wins by resignation"
 # "guild_id": string
 # "datetime": date and time object
 
@@ -46,39 +47,53 @@ class DBManager:
                   to_date: datetime = None):
 
         pipeline = []
-        pipeline.extend(
+        pipeline.extend([
             {
                 "$match": {"$or": [{"first_player_id": player_id}, {"second_player_id": player_id}]}
             }
+        ]
         )
         if other_player_id is not None:
-            pipeline.extend(
+            pipeline.extend([
                 {
                     "$match": {"$or": [{"first_player_id": other_player_id}, {"second_player_id": other_player_id}]}
                 }
+                ]
             )
         if guild_id is not None:
-            pipeline.extend(
+            pipeline.extend([
                 {
                     "$match": {"guild_id": guild_id}
                 }
+                ]
             )
         if from_date is not None:
-            pipeline.extend(
+            pipeline.extend([
                 {
                     "$match": {"datetime": {"$gte": from_date}}
                 }
+                ]
             )
         if to_date is not None:
-            pipeline.extend(
+            pipeline.extend([
                 {
                     "$match": {"datetime": {"$lte": to_date}}
                 }
+                ]
             )
         pipeline.extend([
             {
-                "$group": {"_id": "$result", "count": {"$sum": 1}}
+                "$project":
+                    {
+                        "player_result": {"$cond": [{"$eq": ["$first_player_id", player_id]}, "$result", {"$subtract": [0, "$result"]}]}
+                    }
+            },
+
+            {
+                "$group": {"_id": "$player_result", "count": {"$sum": 1}}
             }
         ])
-
         return self.db.games.aggregate(pipeline)
+
+    def get_api_key_details(self, hashed_key):
+        return self.db.api_keys.find({"key": hashed_key})
