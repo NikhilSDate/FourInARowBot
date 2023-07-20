@@ -3,7 +3,12 @@ import functools
 from flask import request, abort
 import hashlib
 
-from server.app import check_api_key
+from server.db.db import get_api_key_details
+
+
+def check_api_key(key):
+    docs = list(get_api_key_details(hashlib.sha256(key.encode('utf-8')).hexdigest()))
+    return len(docs) == 1
 
 
 def require_api_key(func):
@@ -15,3 +20,4 @@ def require_api_key(func):
         else:
             abort(401)
     return wrapper
+
