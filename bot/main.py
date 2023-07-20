@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from disc.discord_game_manager import DiscordGameManager
 from game.statuses import Status, StatusType
 from api_wrapper.data_api import get_stats
-from disc.utils import stat_dict_to_message
+from disc.utils import stat_dict_to_message, parse_colon_arguments, id_from_ping
 
 load_dotenv()
 
@@ -74,11 +74,16 @@ if __name__ == "__main__":
             await ctx.send(error_messages[status])
 
     @bot.command()
-    async def stats(ctx: Context):
+    async def stats(ctx: Context, *, arg):
         user_id = ctx.author.id
-        response, status = await get_stats(str(user_id))
+        filters = parse_colon_arguments(arg)
+        against = filters.get('against', None)
+        if against is not None:
+            against = id_from_ping(against)
+        response, status = await get_stats(str(user_id), against=against)
         stat_dict = json.loads(response)
         await ctx.send(stat_dict_to_message(stat_dict))
 
     token = os.getenv('DISCORD_TOKEN')
     bot.run(token)
+

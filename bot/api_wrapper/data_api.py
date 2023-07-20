@@ -30,12 +30,13 @@ async def save_discord_game(game: DiscordGame):
             return await response.text(), response.status
 
 
-async def get_stats(player_id: str):
+async def get_stats(player_id: str, against: str = None):
     API_KEY = os.getenv('DATA_API_KEY')
     url = DATA_SERVER_URL + f"/stats/userid/{player_id}"
     header = {"Authorization": API_KEY}
+    params = {"other_player_id": against}
     async with aiohttp.ClientSession() as session:
-        async with session.get(url, headers=header, ssl=False) as response:
+        async with session.get(url, headers=header, params=params, ssl=False) as response:
             return await response.text(), response.status
 
 
