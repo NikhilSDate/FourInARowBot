@@ -7,7 +7,7 @@ from flask import Flask, request
 from flask_pymongo import PyMongo
 from bson import json_util
 
-from server.db.db import get_game, get_stats
+from server.db.db import get_game, get_stats, add_game
 from server.security.api_key import require_api_key
 
 config = configparser.ConfigParser()
@@ -18,17 +18,12 @@ app.config['DEBUG'] = True
 mongo = PyMongo(app)
 
 
-# @app.route("/")
-# def home():
-#     return json_util.dumps(mongo.db.games.find({}))
-
-
 @app.route("/add-game", methods=['POST'])
 @require_api_key
-def add_game():
+def add_new_game():
     new_game = request.get_json()
     _id = add_game(new_game['first_player_id'], new_game['second_player_id'], new_game['guild_id'], new_game['channel_id'],
-                              new_game['moves'], new_game['result'], datetime.fromisoformat(new_game['datetime']))
+                              new_game['rows'], new_game['columns'], new_game['winning_length'], new_game['moves'], new_game['result'], datetime.fromisoformat(new_game['datetime']))
     return json_util.dumps(get_game(_id.inserted_id))
 
 

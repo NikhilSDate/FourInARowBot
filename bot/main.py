@@ -1,3 +1,4 @@
+import json
 import re
 import os
 import random
@@ -8,10 +9,13 @@ from discord.ext.commands import Context
 from dotenv import load_dotenv
 from disc.discord_game_manager import DiscordGameManager
 from game.statuses import Status, StatusType
+from api_wrapper.data_api import get_stats
+from disc.utils import stat_dict_to_message
+
+load_dotenv()
 
 if __name__ == "__main__":
 
-    load_dotenv()
 
     intents = Intents.all()
     bot = commands.Bot(command_prefix="!", intents=intents)
@@ -41,7 +45,7 @@ if __name__ == "__main__":
             await ctx.send('The second argument of newgame must be \'random\', \'first\', or \'second\'')
             return
 
-        status = await game_manager.new_game(channel=ctx.channel, first_player_id=ids[0],
+        status = await game_manager.new_game(channel=ctx.channel, guild=ctx.guild, first_player_id=ids[0],
                                        second_player_id=ids[1], dims=(rows, columns), winning_length=winning_length)
 
         if status != Status.OK:
@@ -69,11 +73,12 @@ if __name__ == "__main__":
         if status in StatusType.ERROR:
             await ctx.send(error_messages[status])
 
-
-
-
-
-
+    @bot.command()
+    async def stats(ctx: Context):
+        user_id = ctx.author.id
+        response, status = await get_stats(str(user_id))
+        stat_dict = json.loads(response)
+        await ctx.send(stat_dict_to_message(stat_dict))
 
     token = os.getenv('DISCORD_TOKEN')
     bot.run(token)

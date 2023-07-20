@@ -13,6 +13,9 @@ from werkzeug.local import LocalProxy
 # collection games:
 # "first_player_id": string (can be 'ai')
 # "second_player_id": string (can be 'ai')
+# "rows": number of rows in board
+# "columns": number of columns in board
+# "winning_length": length to win
 # "moves": string
 # "result": integer (0 is draw by full board, 1 is first player wins by position, 2 is first player wins by resignation, -1 is second player wins by position, -2 is second player wins by resignation"
 # "guild_id": string
@@ -26,21 +29,24 @@ from werkzeug.local import LocalProxy
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
-        print('db is none')
         db = g._database = PyMongo(current_app).db
     return db
 
 db = LocalProxy(get_db)
-def add_game(first_player_id: str, second_player_id: str, guild_id: str, channel_id: str, moves: list,
+
+def add_game(first_player_id: str, second_player_id: str, guild_id: str, channel_id: str, rows: int, columns: int, winning_length: int, moves: list,
              result: int, dtime: datetime):
     doc = {
         "first_player_id": first_player_id,
         "second_player_id": second_player_id,
         "guild_id": guild_id,
         "channel_id": channel_id,
+        "rows": rows,
+        "columns": columns,
+        "winning_length": winning_length,
         "moves": moves,
         "result": result,
-        "dtime": dtime
+        "datetime": dtime
     }
 
     return db.games.insert_one(doc)
