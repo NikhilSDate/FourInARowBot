@@ -6,12 +6,13 @@ from discord.abc import Messageable
 
 from disc.discord_game import DiscordGame
 from game.statuses import Status
-from api_wrapper.data_api import save_discord_game
+from api_wrapper.data_api import DataAPI
 
 
 class DiscordGameManager:
     def __init__(self):
         self.games: Dict[Messageable, DiscordGame] = {}
+        self.data_api = DataAPI()
 
     async def new_game(self, channel: Messageable, guild: Guild, first_player_id: str, second_player_id: str, dims: Tuple[int, int] = (6, 7), winning_length: int = 4) -> Status:
         if channel in self.games:
@@ -33,7 +34,7 @@ class DiscordGameManager:
 
     async def handle_game_over(self, channel):
         await channel.send(self.games[channel].result_to_message())
-        await save_discord_game(self.games[channel])
+        await self.data_api.save_discord_game(self.games[channel])
         self.remove_game(channel)
 
     async def handle_resign(self, channel: Messageable, player_id: str) -> Status:

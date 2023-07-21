@@ -32,12 +32,13 @@ def add_new_game():
 def get_player_stats(player_id):
     other_player_id = request.args.get('other_player_id')
     guild_id = request.args.get('guild_id')
+    channel_id = request.args.get('channel_id')
     from_date = request.args.get('from_date')
     to_date = request.args.get('to_date')
     from_date = datetime.fromisoformat(from_date) if from_date is not None else None
     to_date = datetime.fromisoformat(to_date) if to_date is not None else None
 
-    stats = get_stats(player_id, other_player_id, guild_id, from_date, to_date)
+    stats = get_stats(player_id, other_player_id, guild_id, channel_id, from_date, to_date)
 
     # process result
     stat_dict = {result: 0 for result in [-2, -1, 0, 1, 2]}

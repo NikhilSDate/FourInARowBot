@@ -2,6 +2,8 @@ import json
 import re
 import os
 import random
+from datetime import datetime
+
 from discord import Intents
 from discord.ext import commands
 from discord.ext.commands import Context
@@ -9,8 +11,8 @@ from discord.ext.commands import Context
 from dotenv import load_dotenv
 from disc.discord_game_manager import DiscordGameManager
 from game.statuses import Status, StatusType
-from api_wrapper.data_api import get_stats
-from disc.utils import stat_dict_to_message, parse_colon_arguments, id_from_ping
+from api_wrapper.data_api import DataAPI
+from disc.utils import stat_dict_to_message, parse_colon_arguments, user_id_from_mention, channel_id_from_mention
 
 load_dotenv()
 
@@ -20,6 +22,7 @@ if __name__ == "__main__":
     intents = Intents.all()
     bot = commands.Bot(command_prefix="!", intents=intents)
     game_manager = DiscordGameManager()
+    data_api = DataAPI()
 
     error_messages = {Status.CHANNEL_BUSY: 'A game is currently in progress in this channel.',
                       Status.NO_ACTIVE_GAME: 'You are not a participant in an active game in this channel.',
@@ -74,15 +77,31 @@ if __name__ == "__main__":
             await ctx.send(error_messages[status])
 
     @bot.command()
-    async def stats(ctx: Context, *, arg):
-        user_id = ctx.author.id
-        filters = parse_colon_arguments(arg)
+    async def stats(ctx: Context, *, arg=''):
+        user_id = str(ctx.author.id)
+        filters = parse_colon_arguments(arg, options=['against', 'server', 'from', 'to', 'channel', 'mode'])
         against = filters.get('against', None)
+        guild = filters.get('server', None)
+        channel = filters.get('channel', None)
+        from_date = filters.get('from', None)
+        to_date = filters.get('to', None)
+        mode = filters.get('mode', 'concise')
         if against is not None:
-            against = id_from_ping(against)
-        response, status = await get_stats(str(user_id), against=against)
+            against = user_id_from_mention(against)
+        if guild == 'current':
+            guild = str(ctx.guild.id)
+        if channel is not None:
+            channel = channel_id_from_mention(channel)
+        if from_date is not None:
+            from_date = datetime.fromisoformat(from_date)
+        if to_date is not None:
+            to_date = datetime.fromisoformat(to_date)
+
+        response, status = await data_api.get_stats(user_id, other_player_id=against, guild_id=guild,
+                                                    channel_id=channel, from_date=from_date, to_date=to_date)
         stat_dict = json.loads(response)
-        await ctx.send(stat_dict_to_message(stat_dict))
+
+        await ctx.send(stat_dict_to_message(stat_dict, mode=mode))
 
     token = os.getenv('DISCORD_TOKEN')
     bot.run(token)
