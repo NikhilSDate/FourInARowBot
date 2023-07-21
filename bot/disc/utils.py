@@ -21,6 +21,7 @@ def stat_dict_to_message(stat_dict: Dict[str, str], mode='concise'):
     message += f'Draws: {converted_dict[0]}'
     return message
 
+
 def user_id_from_mention(mention):
     id_regex = re.compile('^<@(.+)>$')
     return id_regex.match(mention).group(1)

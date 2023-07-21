@@ -18,7 +18,6 @@ load_dotenv()
 
 if __name__ == "__main__":
 
-
     intents = Intents.all()
     bot = commands.Bot(command_prefix="!", intents=intents)
     game_manager = DiscordGameManager()
@@ -31,8 +30,10 @@ if __name__ == "__main__":
                       Status.COLUMN_FULL: 'The column you are trying to play your piece in is full.',
                       }
 
+
     @bot.command()
-    async def newgame(ctx: Context, other_player: str, mode='random', rows: int = 6, columns: int = 7, winning_length: int = 4):
+    async def newgame(ctx: Context, other_player: str, mode='random', rows: int = 6, columns: int = 7,
+                      winning_length: int = 4):
         id_regex = re.compile('^<@(.+)>$')
         author_id = str(ctx.author.id)
         other_player_id = id_regex.match(other_player).group(1)
@@ -49,7 +50,8 @@ if __name__ == "__main__":
             return
 
         status = await game_manager.new_game(channel=ctx.channel, guild=ctx.guild, first_player_id=ids[0],
-                                       second_player_id=ids[1], dims=(rows, columns), winning_length=winning_length)
+                                             second_player_id=ids[1], dims=(rows, columns),
+                                             winning_length=winning_length)
 
         if status != Status.OK:
             await ctx.send(error_messages[status])
@@ -75,6 +77,7 @@ if __name__ == "__main__":
         status = await game_manager.handle_resign(ctx.channel, str(ctx.author.id))
         if status in StatusType.ERROR:
             await ctx.send(error_messages[status])
+
 
     @bot.command()
     async def stats(ctx: Context, *, arg=''):
@@ -103,6 +106,6 @@ if __name__ == "__main__":
 
         await ctx.send(stat_dict_to_message(stat_dict, mode=mode))
 
+
     token = os.getenv('DISCORD_TOKEN')
     bot.run(token)
-
