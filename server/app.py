@@ -7,8 +7,8 @@ from flask import Flask, request
 from flask_pymongo import PyMongo
 from bson import json_util
 
-from server.db.db import get_game, get_stats, add_game
-from server.security.api_key import require_api_key
+from db.db import get_game, get_stats, add_game
+from security.api_key import require_api_key
 
 config = configparser.ConfigParser()
 config.read(os.path.abspath(os.path.join(".ini")))
