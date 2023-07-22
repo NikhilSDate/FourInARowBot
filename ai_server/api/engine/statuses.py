@@ -1,0 +1,29 @@
+from enum import Enum
+
+
+class Status(Enum):
+    OK = 0
+    COLUMN_FULL = 1
+    WRONG_TURN = 2
+    FIRST_WINS_BY_POSITION = 3
+    SECOND_WINS_BY_POSITION = 4
+    FIRST_WINS_BY_RESIGNATION = 5
+    SECOND_WINS_BY_RESIGNATION = 6
+    DRAW_BY_STALEMATE = 7
+    DRAW_BY_AGREEMENT = 8
+    NO_ACTIVE_GAME = 9
+    INVALID_INDEX = 10
+    CHANNEL_BUSY = 11
+    AI_BUSY = 10
+
+
+class StatusType(set, Enum):
+    ERROR = {Status.COLUMN_FULL, Status.WRONG_TURN, Status.WRONG_TURN, Status.NO_ACTIVE_GAME, Status.INVALID_INDEX,
+             Status.CHANNEL_BUSY}
+    WIN = {Status.FIRST_WINS_BY_POSITION, Status.SECOND_WINS_BY_POSITION, Status.FIRST_WINS_BY_RESIGNATION, Status.SECOND_WINS_BY_RESIGNATION}
+    DRAW = {Status.DRAW_BY_STALEMATE, Status.DRAW_BY_AGREEMENT}
+    GAME_OVER = {*WIN, *DRAW}
+
+
+class StatusError(Exception):
+    pass

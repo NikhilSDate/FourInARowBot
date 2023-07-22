@@ -4,8 +4,8 @@ from typing import Tuple
 import numpy as np
 from numpy._typing import NDArray
 
-from game.colors import Color
-from game.connect_four_board import ConnectFourBoard
+from engine.colors import Color
+from engine.connect_four_board import ConnectFourBoard
 
 
 def run_evaluation(run_length, num_open):
