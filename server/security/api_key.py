@@ -3,7 +3,7 @@ import functools
 from flask import request, abort
 import hashlib
 
-from server.db.db import get_api_key_details
+from db.db import get_api_key_details
 
 
 def check_api_key(key):
