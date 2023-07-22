@@ -1,5 +1,4 @@
 import json
-import re
 import os
 import random
 from datetime import datetime
@@ -10,6 +9,7 @@ from discord.ext.commands import Context
 
 from dotenv import load_dotenv
 from disc.discord_game_manager import DiscordGameManager
+from disc.help_command import MyHelp
 from game.statuses import Status, StatusType
 from api_wrapper.data_api import DataAPI
 from disc.utils import stat_dict_to_message, parse_colon_arguments, user_id_from_mention, channel_id_from_mention
@@ -19,7 +19,7 @@ load_dotenv()
 if __name__ == "__main__":
 
     intents = Intents.all()
-    bot = commands.Bot(command_prefix="!", intents=intents)
+    bot = commands.Bot(command_prefix="!", intents=intents, help_command=MyHelp())
     game_manager = DiscordGameManager()
     data_api = DataAPI()
 
@@ -31,12 +31,13 @@ if __name__ == "__main__":
                       }
 
 
-    @bot.command()
-    async def newgame(ctx: Context, other_player: str, mode='random', rows: int = 6, columns: int = 7,
-                      winning_length: int = 4):
-        id_regex = re.compile('^<@(.+)>$')
+    @bot.command(help="Create a new game."
+                      "\n\nThe `mode` argument controls which player starts first and must be either `first`,`second`, or `random`."
+                      "\n\nExample usage: `!newgame @foobar second 8 8 4`")
+    async def newgame(ctx: Context, other_player_mention: str, mode: str = 'random', rows: int = 6, columns: int = 7, winning_length: int = 4):
+
         author_id = str(ctx.author.id)
-        other_player_id = id_regex.match(other_player).group(1)
+        other_player_id = user_id_from_mention(other_player_mention)
 
         if mode == 'first':
             ids = [author_id, other_player_id]
@@ -46,7 +47,7 @@ if __name__ == "__main__":
             ids = [author_id, other_player_id]
             random.shuffle(ids)
         else:
-            await ctx.send('The second argument of newgame must be \'random\', \'first\', or \'second\'')
+            await ctx.send('The second argument of newgame \nmust be \'random\', \'first\', or \'second\'')
             return
 
         status = await game_manager.new_game(channel=ctx.channel, guild=ctx.guild, first_player_id=ids[0],
@@ -59,9 +60,9 @@ if __name__ == "__main__":
             await game_manager.print_board(ctx.channel)
 
 
-    @bot.command()
-    async def move(ctx: Context, one_indexed_column: int):
-        zero_indexed_column = one_indexed_column - 1
+    @bot.command(help='Play a move\nExample usage: `!move 4`')
+    async def move(ctx: Context, column: int):
+        zero_indexed_column = column - 1
         status = game_manager.do_move(channel=ctx.channel, player_id=str(ctx.author.id), column=zero_indexed_column)
         if status in StatusType.ERROR:
             await ctx.send(error_messages[status])
@@ -72,17 +73,19 @@ if __name__ == "__main__":
             await game_manager.handle_game_over(ctx.channel)
 
 
-    @bot.command()
+    @bot.command(help='Resign the game\n Example usage: !resign')
     async def resign(ctx: Context):
         status = await game_manager.handle_resign(ctx.channel, str(ctx.author.id))
         if status in StatusType.ERROR:
             await ctx.send(error_messages[status])
 
 
-    @bot.command()
-    async def stats(ctx: Context, *, arg=''):
+    @bot.command(help="Get your stats"
+                      "\n\nAllowed filters are `against: @user`, `server: current` (for games played in the current server only),`from: YYYY-MM-DD`, `to: YYYY-MM-DD` and `channel: #channel`"
+                      "\n\nExample usage: `!stats against: @foobar server: current from: 2023-01-01 channel: #general`")
+    async def stats(ctx: Context, *, filters=''):
         user_id = str(ctx.author.id)
-        filters = parse_colon_arguments(arg, options=['against', 'server', 'from', 'to', 'channel', 'mode'])
+        filters = parse_colon_arguments(filters, options=['against', 'server', 'from', 'to', 'channel', 'mode'])
         against = filters.get('against', None)
         guild = filters.get('server', None)
         channel = filters.get('channel', None)

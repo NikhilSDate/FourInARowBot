@@ -47,4 +47,4 @@ def get_player_stats(player_id):
 
     return json.dumps(stat_dict)
 
-# app.run(ssl_context='adhoc')
+app.run(ssl_context='adhoc')
