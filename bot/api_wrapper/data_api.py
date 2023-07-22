@@ -2,9 +2,8 @@ import os
 
 from api_wrapper.utils import Singleton
 from disc.discord_game import DiscordGame
-from api_wrapper.config import DATA_SERVER_URL
 from game.statuses import Status
-import asyncio
+import json
 import aiohttp
 from datetime import datetime
 
@@ -15,13 +14,18 @@ class DataAPI(metaclass=Singleton):
         self.api_key = os.getenv('DATA_API_KEY')
         if self.api_key is None:
             raise ValueError('API key must not be None')
+        with open('config.json', 'r') as config_file:
+            content = config_file.read()
+        self.DATA_API_URL = json.loads(content).get('DATA_API_URL', '127.0.0.1:5000')
+
 
     @property
     def authorization_header(self):
         return {'Authorization': self.api_key}
 
     async def save_discord_game(self, game: DiscordGame):
-        url = DATA_SERVER_URL + "/add-game"
+
+        url = self.DATA_API_URL + "/add-game"
         body = {
             "first_player_id": game.first_player_id,
             "second_player_id": game.second_player_id,
@@ -42,7 +46,8 @@ class DataAPI(metaclass=Singleton):
     async def get_stats(self, player_id: str, other_player_id: str = None,
                         guild_id: str = None, channel_id: str = None, from_date: datetime = None,
                         to_date: datetime = None):
-        url = DATA_SERVER_URL + f"/stats/userid/{player_id}"
+
+        url = self.DATA_API_URL + f"/stats/userid/{player_id}"
         from_date = from_date.isoformat() if from_date is not None else from_date
         to_date = to_date.isoformat() if to_date is not None else to_date
         params = {"other_player_id": other_player_id, "guild_id": guild_id, "channel_id": channel_id,

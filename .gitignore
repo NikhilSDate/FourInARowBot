@@ -1,3 +1,4 @@
 /.env
 server/.ini
-server/generate_key.py
+server/security/generate_key.py
+bot/config.json
