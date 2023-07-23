@@ -147,10 +147,3 @@ def min_value(board: ConnectFourBoard, alpha: float, beta: float, previous_loc, 
             return v, action
         beta = min(beta, v)
     return v, best_action
-
-
-# board = ConnectFourBoard()
-# board.do_moves([(2, Color.FIRST),
-#                 (6, Color.SECOND),
-#                 (3, Color.FIRST),
-# ])
