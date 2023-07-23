@@ -1,10 +1,9 @@
 from typing import Tuple, Optional
 
-
+from api_wrapper.ai_api import AIApi
 from game.colors import Color
 from game.game import Game
-from game.statuses import Status, StatusType
-from ai.minimax import alpha_beta_search
+from game.statuses import Status
 
 
 class AIGame(Game):
@@ -17,6 +16,7 @@ class AIGame(Game):
         else:
             self.ai_color = Color.FIRST
         self.status = Status.OK
+        self.ai_api = AIApi()
 
     def do_move(self, column: int, color: Optional[Color] = None) -> Status:
         if color != self.human_color:
@@ -26,8 +26,9 @@ class AIGame(Game):
         if status != Status.OK:
             return status
 
-    def do_ai_move(self):
-        evaluation, best_move = alpha_beta_search(self.board, self.ai_color)
+    async def do_ai_move(self):
+        resp = await self.ai_api.evaluation(self.board, self.ai_color)
+        evaluation, best_move = resp[0]['v'], resp[0]['action']
         status = super().do_move(best_move, self.ai_color)
         return status
 

@@ -9,8 +9,6 @@ class DiscordMixin:
     def get_player_color(self, player_id: str) -> Color:
         return self.players[player_id]
 
-
-
     def to_message(self) -> str:
         # try to add column numbers
         message = ''
