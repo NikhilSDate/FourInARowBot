@@ -3,6 +3,7 @@ import json
 import os
 from datetime import datetime
 
+from dotenv import load_dotenv
 from flask import Flask, request
 from flask_pymongo import PyMongo
 from bson import json_util
@@ -10,10 +11,12 @@ from bson import json_util
 from db.db import get_game, get_stats, add_game
 from security.api_key import require_api_key
 
-config = configparser.ConfigParser()
-config.read(os.path.abspath(os.path.join(".ini")))
+
+load_dotenv()
+
+
 app = Flask(__name__)
-app.config['MONGO_URI'] = config['DEV']['DB_URI']
+app.config['MONGO_URI'] = os.getenv('DB_URI')
 app.config['DEBUG'] = True
 mongo = PyMongo(app)
 

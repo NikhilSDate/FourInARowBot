@@ -2,3 +2,5 @@
 server/.ini
 server/security/generate_key.py
 bot/config.json
+bot/.env
+server/.env
