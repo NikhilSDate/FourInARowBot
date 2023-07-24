@@ -9,7 +9,7 @@ from game.statuses import Status
 class AIGame(Game):
 
     def __init__(self, human_color=Color.FIRST):
-        super().__init__((6, 7), 4)
+        super().__init__((6, 7), 4) # only support standard dimensions for now
         self.human_color = human_color
         if human_color == Color.FIRST:
             self.ai_color = Color.SECOND
@@ -18,13 +18,8 @@ class AIGame(Game):
         self.status = Status.OK
         self.ai_api = AIApi()
 
-    def do_move(self, column: int, color: Optional[Color] = None) -> Status:
-        if color != self.human_color:
-            raise ValueError('color must be equal to self.human_color')
-
-        status = super().do_move(column, color)
-        if status != Status.OK:
-            return status
+    def do_move(self, column: int, _: Color = None) -> Status:
+        return super().do_move(column, self.human_color)
 
     async def do_ai_move(self):
         resp = await self.ai_api.evaluation(self.board, self.ai_color)

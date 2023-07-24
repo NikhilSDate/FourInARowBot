@@ -8,14 +8,18 @@ from game.statuses import Status
 
 class DiscordAIGame(AIGame, DiscordMixin):
 
-    def __init__(self, channel=None, guild=None, player_color=Color.FIRST, player_id: str = None):
-        super().__init__(player_color)
-        self.player_color = player_color
-        self.player_id = player_id
-        self.players = {self.player_id: self.player_color}
-        self.channel = channel
-        self.guild = guild
+    def __init__(self, guild=None, channel=None, first_player_id: str = None, second_player_id: str = None):
+        if first_player_id == 'ai':
+            human_color = Color.SECOND
+        else:
+            human_color = Color.FIRST
+        super().__init__(human_color)
+        self.players = {first_player_id: Color.FIRST, second_player_id: Color.SECOND}
         self.colors = {Color.FIRST: 'RED', Color.SECOND: 'BLUE'}
+        self.guild = guild
+        self.channel = channel
+        self.first_player_id = first_player_id
+        self.second_player_id = second_player_id
 
     def handle_resign(self, player_id: str):
         super().handle_resign(self.players[player_id])
