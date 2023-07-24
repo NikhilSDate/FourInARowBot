@@ -18,7 +18,7 @@ only one game can be played at a time in a single channel.
   in a column that's full, a move by a user who's not a participant in an active game)
 * The project includes a Flask backend API that accepts requests to save every game after it has completed. For each game, the bot makes a request to the backend stores, in a MongoDB database, the Discord User IDs of the two players, the server and channel IDs in which the game was played, the board configuration for the game (number of rows, columns, and pieces in a row to win), the moves played in the game, the result of the game, and the date and time when the game was completed.
 * The Flask backend also allows any player's stats (the number of games they have won, lost, and drawn) to be requested. The backend also allows the stats to be filtered by a specific opponent, Discord server or channel and by a date and time range. The bot uses this functionality to allow users to see their stats, filtered or unfiltered.
-* The backend is secured using an API key that must be sent as an authorization header with every request. A hashed version of the API key is stored on the MongoDB database. If you want to use the run the backend code yourself, you will have to generate your own API key.
+* To protect user data, the backend is secured using an API key that must be sent as an authorization header with every request. A hashed version of the API key is stored on the MongoDB database. If you want to use the run the backend code yourself, you will have to generate an API key and store it in the database yourself.
 
 ## Video demo
 
