@@ -11,9 +11,7 @@ from bson import json_util
 from db.db import get_game, get_stats, add_game
 from security.api_key import require_api_key
 
-
 load_dotenv()
-
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = os.getenv('DB_URI')
