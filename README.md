@@ -29,7 +29,7 @@ only one game can be played at a time in a single channel.
 
 To run this bot, you will have to host it yourself. This will involve individually hosting the bot and the Flask backend application. The bot can, however, run without the Flask backend; it will simply lack the ability to save completed games and display user stats. 
 
-## A) Installing and running the bot without the backend
+### A) Installing and running the bot without the backend
 
 * Clone this repository: `git clone https://github.com/NikhilSDate/FourInARowBot.git`
 * Navigate to the `bot` directory. This is where the code for the bot is located
@@ -41,7 +41,7 @@ To run this bot, you will have to host it yourself. This will involve individual
 * Run the `main.py` script with `python main.py`. The bot should now be up and running.
   
 
-## B) Running the backend 
+### B) Running the backend 
 Note: these instructions are for running the backend locally. If you want to run the backend on a cloud platform like Render or Vercel, you might have to manually add the `DB_URI` emvironment variable instead of using a `env` file. See the instructions below for the value of this environment variable.
 
 * Create a MongoDB database (either locally or in the cloud) to store game data. The backend will will store game data in a collection named `games` in this database. If you use MongoDB Atlas for this step, you will have to add the public IP address of the Flask backend to the IP Access List of the MongoDB Atlas project containing your database. 
@@ -57,7 +57,7 @@ Note: these instructions are for running the backend locally. If you want to run
   This runs the aplication over HTTPS using a self-signed certificate. HTTPS is needed since the application receives an API key and sends and receives Discord User IDs, which should both be encrypted.
 * The Flask backend should be up and running. However, the bot won't be able to talk to the application just yet. The next sections explains how to integrate the bot with the backend 
 
-## C) Integrating the bot with the backend
+### C) Integrating the bot and the backend
 * Generate an API key using a method of your choice. Use Python's `hashlib` module to hash the key using SHA256 as follows (where `key` is your API key and should be a string):
   ```python
   hashed_key = hashlib.sha256(key.enocode('utf-8')).hexdigest()
