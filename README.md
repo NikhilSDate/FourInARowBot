@@ -78,7 +78,7 @@ Note: these instructions are for running the backend locally. If you want to run
 *  Open the `config.json` file in the bot directory and enter the following text:
   ```javascript
   {
-  "DATA_API_URL": "<url_of_the_flask_backend>",
+    "DATA_API_URL": "<url_of_the_flask_backend>",
   }
   ```
 * Stop the `main.py` script if it is still running from when you ran it in Part A and run it again with `python main.py`. The bot should now be able to talk to the API.
