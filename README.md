@@ -83,8 +83,6 @@ Note: these instructions are for running the backend locally. If you want to run
   ```
 * Stop the `main.py` script if it is still running from when you ran it in Part A and run it again with `python main.py`. The bot should now be able to talk to the API.
   
-  ```
-
 ## Video demo
 
 https://github.com/NikhilSDate/FourInARowBot/assets/47920034/8dfe280b-bb10-4135-884b-9693179681fe
