@@ -3,8 +3,12 @@
 This project is a Discord bot that lets Discord users play the popular two-player game 
 Four in a Row (called Connect Four by Hasbro) against each other. The project has two parts—the code for the bot written using the discord.py library (in the [bot](/bot) directory and a backend API written using Flask (in the [server](/server) directory). The Flask backend interacts with a MongoDB database storing game data. The bot uses the API to save completed games and retrieve player stats. 
 
+#### [Features](#features) 
+#### [Self-hosting Instructions](#self-hosting-instructions)
+#### [Video Demo](#video-demo)
+#### [Screenshots](#screenshots)
+#### [Bot Usage](#usage)
 ## Features
-
 ### Bot
 
 * The bot supports multiple simultaneous games across different servers and channels. However, 
@@ -25,7 +29,7 @@ only one game can be played at a time in a single channel.
 * The backend exposes an API method to retrieve stats for any user. Stats consist of the number of games the user has won, lost and drawn. Stats can also be queried for games played against a particular opponent, in a particular server or channel, and in a particular date and time range.
 * To protect user data, the backend is secured using an API key that must be sent as an authorization header with every request. A hashed version of the API key is stored on the MongoDB database. If you want to host this bot yourself, you will have to generate an API key and store it in the database manually (see the [Self-hosting instructions](#self-hosting-instructions) section for more information).
 
-## Self-hosting instructions
+## Self-hosting Instructions
 
 To run this bot, you will have to host it yourself. This will involve individually hosting the bot and the Flask backend application. The bot can, however, run without the Flask backend; it will simply lack the ability to save completed games and display user stats. 
 
@@ -83,7 +87,7 @@ Note: these instructions are for running the backend locally. If you want to run
   ```
 * Stop the `main.py` script if it is still running from when you ran it in Part A and run it again with `python main.py`. The bot should now be able to talk to the API.
   
-## Video demo
+## Video Demo
 
 https://github.com/NikhilSDate/FourInARowBot/assets/47920034/8dfe280b-bb10-4135-884b-9693179681fe
 
@@ -110,6 +114,21 @@ https://github.com/NikhilSDate/FourInARowBot/assets/47920034/8dfe280b-bb10-4135-
 
 ### A player initiating a game and choosing to start second
 ![starting second](media/starting_second.png)
+
+## Bot Usage
+
+Angle brackets indicate a required parameter. Square brackets indicate an optional parameter. 
+A value for an optional parameter, if given, indicates the default value for that parameter. 
+For example, 'rows=6' means that the default value for the 'rows' parameter is 6.
+
+| Command                                                                                         | Description                                                                                                                                                                                                                                                                              |
+|-------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| !newgame \<other_player_mention\> \[mode=random\] \[rows=6\] \[columns=7\] \[winning_length=4\] | Create a new game. <br/> The `mode` argument controls which player starts first and must be either `first`, `second`, or `random`. <br/> Example usage: `!newgame @foobar second 8 8 4`                                                                                                  |
+| !move \<column\>                                                                                | Play a move <br/> Example usage: `!move 4`                                                                                                                                                                                                                                               |
+| !resign                                                                                         | Resign the game <br/> Example usage: !resign                                                                                                                                                                                                                                             |
+| !stats \[filters\]                                                                              | Get your stats <br/> Allowed filters are `against: @user`, `server: current` (for games played in the current server only),`from: YYYY-MM-DD`, `to: YYYY-MM-DD` and `channel: #channel`<br/> Example usage: `!stats against: @foobar server: current from: 2023-01-01 channel: #general` |
+| !help \[command=None\]                                                                          | Get a list of all the commands or get help on a specific command <br/>Example usage `!help newgame`                                                                                                                                                                                      |
+
 
 
 
