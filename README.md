@@ -3,11 +3,11 @@
 This project is a Discord bot that lets Discord users play the popular two-player game 
 Four in a Row (called Connect Four by Hasbro) against each other. The project has two parts—the code for the bot written using the discord.py library (in the [bot](/bot) directory and a backend API written using Flask (in the [server](/server) directory). The Flask backend interacts with a MongoDB database storing game data. The bot uses the API to save completed games and retrieve player stats. 
 
-#### [Features](#features-1) 
-#### [Self-hosting Instructions](#self-hosting-instructions-1)
-#### [Video Demo](#video-demo-1)
-#### [Screenshots](#screenshots-1)
-#### [Bot Usage](#bot-usage-1)
+**[Features](#features)**<br/> 
+**[Self-hosting Instructions](#self-hosting-instructions)**<br/>
+**[Video Demo](#video-demo)**<br/>
+**[Screenshots](#screenshots)**<br/>
+**[Bot Usage](#bot-usage)**<br/>
 ## Features
 ### Bot
 
