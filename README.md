@@ -3,11 +3,11 @@
 This project is a Discord bot that lets Discord users play the popular two-player game 
 Four in a Row (called Connect Four by Hasbro) against each other. The project has two parts—the code for the bot written using the discord.py library (in the [bot](/bot) directory and a backend API written using Flask (in the [server](/server) directory). The Flask backend interacts with a MongoDB database storing game data. The bot uses the API to save completed games and retrieve player stats. 
 
-#### [Features](#features) 
-#### [Self-hosting Instructions](#self-hosting-instructions)
-#### [Video Demo](#video-demo)
-#### [Screenshots](#screenshots)
-#### [Bot Usage](#bot-usage)
+#### [Features](#features-1) 
+#### [Self-hosting Instructions](#self-hosting-instructions-1)
+#### [Video Demo](#video-demo-1)
+#### [Screenshots](#screenshots-1)
+#### [Bot Usage](#bot-usage-1)
 ## Features
 ### Bot
 
@@ -119,7 +119,9 @@ https://github.com/NikhilSDate/FourInARowBot/assets/47920034/8dfe280b-bb10-4135-
 
 Angle brackets indicate a required parameter. Square brackets indicate an optional parameter. 
 A value for an optional parameter, if given, indicates the default value for that parameter. 
-For example, 'rows=6' means that the default value for the 'rows' parameter is 6.
+For example, 'rows=6' means that the default value for the 'rows' parameter is 6. 
+Only the values of parameters should be specified when running commands, not the names. 
+See the example usage for each command for examples of this. 
 
 | Command                                                                                         | Description                                                                                                                                                                                                                                                                              |
 |-------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
