@@ -7,7 +7,7 @@ Four in a Row (called Connect Four by Hasbro) against each other. The project ha
 #### [Self-hosting Instructions](#self-hosting-instructions)
 #### [Video Demo](#video-demo)
 #### [Screenshots](#screenshots)
-#### [Bot Usage](#usage)
+#### [Bot Usage](#bot-usage)
 ## Features
 ### Bot
 
