@@ -100,12 +100,18 @@ https://github.com/NikhilSDate/FourInARowBot/assets/47920034/8dfe280b-bb10-4135-
 
 ![resign](media/resign.png)
 
-### A player initiating a game and choosing to start second
-![starting second](media/starting_second.png)
+### Viewing stats with and without filters
+
+![stats](media/stats.png)
 
 ### A game with a custom board size (8 rows and 8 columns)
 
 ![8x8 board](media/custom_board.png)
+
+### A player initiating a game and choosing to start second
+![starting second](media/starting_second.png)
+
+
 
 
 
