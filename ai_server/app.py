@@ -1,3 +1,5 @@
+import timeit
+
 import numpy as np
 from flask import Flask, request, jsonify
 from numpy import vectorize
@@ -13,9 +15,10 @@ app = Flask(__name__)
 def evaluate():
     board = request.args.get('board')
     color = request.args.get('color')
+    depth = request.args.get('depth', 4)
     board = decode_board(board)
     color = decode_color(color)
-    v, action = alpha_beta_search(board, color)
+    v, action = alpha_beta_search(board, color, depth)
     return jsonify({"v": v, "action": action})
 
 
@@ -40,3 +43,11 @@ def decode_board(board: str, shape=(6, 7)) -> ConnectFourBoard:
 def decode_color(color: str) -> Color:
     assert color == '1' or color == '2'
     return Color.FIRST if color == '1' else Color.SECOND
+
+
+if __name__ == '__main__':
+    board = ConnectFourBoard()
+    board.do_move(4, Color.FIRST)
+    board.do_move(3, Color.SECOND)
+    board.do_move(5, Color.FIRST)
+    print(timeit.timeit(lambda: alpha_beta_search(board, Color.FIRST), number=1))

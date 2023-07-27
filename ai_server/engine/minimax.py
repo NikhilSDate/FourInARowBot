@@ -86,23 +86,30 @@ def evaluation_function(board: ConnectFourBoard):
 def actions(board: ConnectFourBoard):
     action_list = [i for i in range(board.shape[1]) if board.envelope(i) != board.shape[0]]
     return action_list
-    # key = {}
-    # for action in action_list:
-    #     result = copy.deepcopy(board)
-    #     result.do_move(action, color)
-    #     key[action] = evaluation_function(result)
-    # return sorted(action_list, key=lambda i: key[i])
+
+
+#     key = {}
+#     for action in action_list:
+#         result = copy.deepcopy(board)
+#         result.do_move(action, color)
+#         key[action] = evaluation_function(result)
+#     return sorted(action_list, key=lambda i: key[i])
 
 
 def terminal(board: ConnectFourBoard, loc) -> bool:
     return board.full() or board.eval_game_state(loc, Color.FIRST) or board.eval_game_state(loc, Color.SECOND)
 
 
+max_depth = 4
+
+
 def cutoff_test(board: ConnectFourBoard, loc, depth) -> bool:
-    return loc is not None and terminal(board, loc) or depth > 4
+    return loc is not None and terminal(board, loc) or depth > max_depth
 
 
-def alpha_beta_search(board: ConnectFourBoard, color: Color) -> Tuple[float, int]:
+def alpha_beta_search(board: ConnectFourBoard, color: Color, max_dep=4) -> Tuple[float, int]:
+    global max_depth
+    max_depth = max_dep
     if color == Color.FIRST:
         v, action = max_value(board, -np.inf, np.inf, None, 0)
     else:
@@ -110,7 +117,8 @@ def alpha_beta_search(board: ConnectFourBoard, color: Color) -> Tuple[float, int
     return v, action
 
 
-def max_value(board: ConnectFourBoard, alpha: float, beta: float, previous_loc, depth: int) -> Tuple[float, int]:
+def max_value(board: ConnectFourBoard, alpha: float, beta: float, previous_loc, depth: int) -> Tuple[
+    float, int]:
     if cutoff_test(board, previous_loc, depth):
         return evaluation_function(board), -1
     v = -np.inf
@@ -131,7 +139,8 @@ def max_value(board: ConnectFourBoard, alpha: float, beta: float, previous_loc, 
     return v, best_action
 
 
-def min_value(board: ConnectFourBoard, alpha: float, beta: float, previous_loc, depth: int) -> Tuple[float, int]:
+def min_value(board: ConnectFourBoard, alpha: float, beta: float, previous_loc, depth: int) -> Tuple[
+    float, int]:
     if cutoff_test(board, previous_loc, depth):
         return evaluation_function(board), -1
     v = np.inf
@@ -149,5 +158,3 @@ def min_value(board: ConnectFourBoard, alpha: float, beta: float, previous_loc, 
             return v, action
         beta = min(beta, v)
     return v, best_action
-
-

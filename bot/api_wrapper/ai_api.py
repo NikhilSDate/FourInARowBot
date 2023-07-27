@@ -19,8 +19,13 @@ class AIApi(metaclass=Singleton):
         url = self.AI_API_URL + "/evaluate"
         params = {"board": AIApi.encode_board(board), "color": AIApi.encode_color(color)}
         async with aiohttp.ClientSession() as session:
-            async with session.get(url=url, params=params) as response:
-                return json.loads(await response.text()), response.status
+            for depth in range(5, -1, -1):
+                params.update({"depth": depth})
+                async with session.get(url=url, params=params) as response:
+                    txt, status = json.loads(await response.text()), response.status
+                    if status == 200:
+                        return txt, status
+
 
     @staticmethod
     def encode_board(board: ConnectFourBoard):
