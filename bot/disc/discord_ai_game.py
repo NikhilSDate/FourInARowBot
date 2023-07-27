@@ -11,10 +11,12 @@ class DiscordAIGame(AIGame, DiscordMixin):
     def __init__(self, guild=None, channel=None, first_player_id: str = None, second_player_id: str = None):
         if first_player_id == 'ai':
             human_color = Color.SECOND
+            self.players = {second_player_id: Color.SECOND}
         else:
             human_color = Color.FIRST
+            self.players = {first_player_id: Color.FIRST}
+
         super().__init__(human_color)
-        self.players = {first_player_id: Color.FIRST, second_player_id: Color.SECOND}
         self.colors = {Color.FIRST: 'RED', Color.SECOND: 'BLUE'}
         self.guild = guild
         self.channel = channel
