@@ -114,8 +114,9 @@ def max_value(board: ConnectFourBoard, alpha: float, beta: float, previous_loc, 
     if cutoff_test(board, previous_loc, depth):
         return evaluation_function(board), -1
     v = -np.inf
-    best_action = None
-    for action in actions(board):
+    legal_actions = actions(board)
+    best_action = legal_actions[0]
+    for action in legal_actions:
         result = copy.deepcopy(board)
         result.do_move(action, Color.FIRST)
         loc = (result.envelope(action) - 1, action)
@@ -134,8 +135,9 @@ def min_value(board: ConnectFourBoard, alpha: float, beta: float, previous_loc, 
     if cutoff_test(board, previous_loc, depth):
         return evaluation_function(board), -1
     v = np.inf
-    best_action = None
-    for action in actions(board):
+    legal_actions = actions(board)
+    best_action = legal_actions[0]
+    for action in legal_actions:
         result = copy.deepcopy(board)
         result.do_move(action, Color.SECOND)
         loc = (result.envelope(action) - 1, action)
@@ -147,3 +149,5 @@ def min_value(board: ConnectFourBoard, alpha: float, beta: float, previous_loc, 
             return v, action
         beta = min(beta, v)
     return v, best_action
+
+
