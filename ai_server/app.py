@@ -15,7 +15,7 @@ app = Flask(__name__)
 def evaluate():
     board = request.args.get('board')
     color = request.args.get('color')
-    depth = request.args.get('depth', 4)
+    depth = int(request.args.get('depth', 4))
     board = decode_board(board)
     color = decode_color(color)
     v, action = alpha_beta_search(board, color, depth)

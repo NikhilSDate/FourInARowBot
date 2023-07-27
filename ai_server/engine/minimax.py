@@ -107,7 +107,7 @@ def cutoff_test(board: ConnectFourBoard, loc, depth) -> bool:
     return loc is not None and terminal(board, loc) or depth > max_depth
 
 
-def alpha_beta_search(board: ConnectFourBoard, color: Color, max_dep=4) -> Tuple[float, int]:
+def alpha_beta_search(board: ConnectFourBoard, color: Color, max_dep: int=4) -> Tuple[float, int]:
     global max_depth
     max_depth = max_dep
     if color == Color.FIRST:
