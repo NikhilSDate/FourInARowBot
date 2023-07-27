@@ -1,7 +1,7 @@
 from typing import Optional
 
 from ai.ai_game import AIGame
-from disc.DiscordMixin import DiscordMixin
+from disc.discord_mixin import DiscordMixin
 from game.colors import Color
 from game.statuses import Status
 
