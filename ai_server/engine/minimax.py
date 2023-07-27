@@ -99,7 +99,7 @@ def terminal(board: ConnectFourBoard, loc) -> bool:
 
 
 def cutoff_test(board: ConnectFourBoard, loc, depth) -> bool:
-    return loc is not None and terminal(board, loc) or depth > 5
+    return loc is not None and terminal(board, loc) or depth > 4
 
 
 def alpha_beta_search(board: ConnectFourBoard, color: Color) -> Tuple[float, int]:
