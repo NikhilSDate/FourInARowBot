@@ -19,7 +19,7 @@ def evaluate():
     depth = int(request.args.get('depth', 4))
     board = decode_board(board)
     color = decode_color(color)
-    v, action = evaluate_helper(board, color, 10, 9)
+    v, action = evaluate_helper(board, color, 20, 9.75)
     return jsonify({"v": v, "action": action})
 
 
