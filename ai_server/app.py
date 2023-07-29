@@ -1,3 +1,4 @@
+import threading
 import timeit
 
 import numpy as np
@@ -6,8 +7,8 @@ from numpy import vectorize
 
 from engine.colors import Color
 from engine.connect_four_board import ConnectFourBoard
-from engine.minimax import alpha_beta_search
-
+# from engine.minimax import alpha_beta_search, iterative_deepening_search
+from engine.minimax import IterativeDeepeningWithTimeout
 app = Flask(__name__)
 
 
@@ -18,8 +19,21 @@ def evaluate():
     depth = int(request.args.get('depth', 4))
     board = decode_board(board)
     color = decode_color(color)
-    v, action = alpha_beta_search(board, color, depth)
+    v, action = evaluate_helper(board, color, 10, 9)
     return jsonify({"v": v, "action": action})
+
+
+def evaluate_helper(board, color, max_depth, time_limit):
+    e = threading.Event()
+    t = IterativeDeepeningWithTimeout(board, color, max_depth, e)
+    t.start()
+    t.join(time_limit)
+    t.result_lock.acquire()
+    v, action = t.result
+    e.set()
+    t.result_lock.release()
+    t.join()
+    return v, action
 
 
 def decode_board(board: str, shape=(6, 7)) -> ConnectFourBoard:
@@ -45,9 +59,4 @@ def decode_color(color: str) -> Color:
     return Color.FIRST if color == '1' else Color.SECOND
 
 
-if __name__ == '__main__':
-    board = ConnectFourBoard()
-    board.do_move(4, Color.FIRST)
-    board.do_move(3, Color.SECOND)
-    board.do_move(5, Color.FIRST)
-    print(timeit.timeit(lambda: alpha_beta_search(board, Color.FIRST), number=1))
+
