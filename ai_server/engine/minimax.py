@@ -12,59 +12,70 @@ from engine.colors import Color
 from engine.connect_four_board import ConnectFourBoard
 
 
-def run_evaluation(run_length, num_open):
-    if run_length >= 4:
-        return np.inf
-
-    if num_open == 0:
-        return 0
-    if num_open == 1 or num_open == 2:
-        if run_length == 1:
-            return 1
-        elif run_length == 2:
-            return 4
-        elif run_length == 3:
-            return 16
-    elif num_open == 2:
-        if run_length == 1:
-            return 2
-        elif run_length == 2:
-            return 8
-        elif run_length == 3:
-            return 32
-
-
 def evaluation_function(board: ConnectFourBoard):
     def array_evaluation(arr: NDArray[Color], target) -> float:
+        def run_evaluation(run_length, num_open):
+            if run_length >= 4:
+                return np.inf
+
+            if num_open == 0:
+                return 0
+            if num_open == 1:
+                if run_length == 1:
+                    return 1
+                elif run_length == 2:
+                    return 3
+                elif run_length == 3:
+                    return 9
+            elif num_open == 2:
+                if run_length == 1:
+                    return 2
+                elif run_length == 2:
+                    return 6
+                elif run_length == 3:
+                    return 18
+
+        def cluster_evaluation(plen, clen, pend, cstart):
+            if not (cstart - pend == 2 and arr[pend + 1] == Color.EMPTY):
+                return 0
+            if previous_length == 1 and current_length == 2 or previous_length == 2 and current_length == 1:
+                return 5
+            elif previous_length == 2 and current_length == 2:
+                return 3
+            return 0
+
         if len(arr.shape) != 1:
             raise ValueError('arr must be a one-dimensional array')
 
         current_length = 0
+        previous_length = 0
+        previous_end = -1
         evaluation = 0
         in_run = False
-        run_start = -1
+        current_start = -1
         for i, elem in enumerate(arr):
             if in_run:
                 if elem == target:
                     current_length += 1
                 else:
-                    left_open = run_start != 0 and arr[run_start - 1] == Color.EMPTY
+                    left_open = current_start != 0 and arr[current_start - 1] == Color.EMPTY
                     right_open = i != arr.shape[0] and arr[i] == Color.EMPTY
                     num_open = int(left_open) + int(right_open)
                     evaluation += run_evaluation(current_length, num_open)
+                    evaluation += cluster_evaluation(previous_length, current_length, previous_end, current_start)
                     in_run = False
-                    run_start = -1
+                    current_start = -1
+                    previous_length = current_length
+                    previous_end = i - 1
                     current_length = 0
-
-
             else:
                 if elem == target:
                     in_run = True
-                    run_start = i
+                    current_start = i
                     current_length = 1
 
         if in_run:
-            left_open = run_start != 0 and arr[run_start - 1] == Color.EMPTY
+            left_open = current_start != 0 and arr[current_start - 1] == Color.EMPTY
             num_open = int(left_open)
             evaluation += run_evaluation(current_length, num_open)
         return evaluation
@@ -197,7 +208,7 @@ class IterativeDeepeningWithTimeout(threading.Thread):
             self.result = v, action
             self.result_lock.release()
             logging.getLogger(__name__).error(f'Completed depth {depth}')
-#            print(depth, v, action)
+        #            print(depth, v, action)
         return v, action
 
     def alpha_beta_search(self, board: ConnectFourBoard, color: Color, depth: int) -> Tuple[float, int]:
@@ -271,30 +282,55 @@ class IterativeDeepeningWithTimeout(threading.Thread):
         else:
             return sorted_actions
 
-
     def terminal(self, board: ConnectFourBoard, loc) -> bool:
         return board.full() or board.eval_game_state(loc, Color.FIRST) or board.eval_game_state(loc, Color.SECOND)
 
 
-
 if __name__ == '__main__':
     board = ConnectFourBoard()
-    # board.do_move(4, Color.FIRST)
-    # board.do_move(3, Color.SECOND)
-    # board.do_move(5, Color.FIRST)
-    # board.do_move(6, Color.SECOND)
-    # board.do_move(4, Color.FIRST)
-    # board.do_move(0, Color.SECOND)
-    # board.do_move(3, Color.FIRST)
-    e = threading.Event()
-    t = IterativeDeepeningWithTimeout(board, Color.FIRST, 11, e)
-    before = time.perf_counter()
-    t.start()
-    t.join(9)
-    t.result_lock.acquire()
-    e.set()
-    print(t.result)
-    t.result_lock.release()
-    t.join()
-    after = time.perf_counter()
-    print(after-before)
+    board.do_moves([
+        (0, Color.FIRST),
+        (2, Color.SECOND),
+        (1, Color.FIRST),
+        (3, Color.FIRST)
+    ])
+    print(evaluation_function(board))
+
+    # board = ConnectFourBoard()
+    # board.do_moves([(3, Color.FIRST),
+    #                 (3, Color.SECOND),
+    #                 (3, Color.FIRST),
+    #                 (1, Color.SECOND),
+    #                 (3, Color.FIRST),
+    #                 (5, Color.SECOND),
+    #                 (3, Color.FIRST),
+    #                 (3, Color.SECOND),
+    #                 (5, Color.FIRST),
+    #                 (5, Color.SECOND),
+    #                 (1, Color.FIRST),
+    #                 (1, Color.SECOND),
+    #                 (0, Color.FIRST),
+    #                 (5, Color.SECOND),
+    #                 (6, Color.FIRST),
+    #                 (5, Color.SECOND),
+    #                 (5, Color.FIRST),
+    #                 (1, Color.SECOND),
+    #                 (1, Color.FIRST),
+    #                 (4, Color.SECOND),
+    #                 (4, Color.FIRST)
+    #                 ])
+    # print(board.board)
+    # e = threading.Event()
+    # t = IterativeDeepeningWithTimeout(board, Color.SECOND, 15, e)
+    # before = time.perf_counter()
+    # t.start()
+    # t.join(9.75)
+    # t.result_lock.acquire()
+    # e.set()
+    # print(t.result)
+    # t.result_lock.release()
+    # t.join()
+    # after = time.perf_counter()
+    # print(after - before)
+
+    # 6
