@@ -1,7 +1,11 @@
 # Four in a Row Bot
 
-This project is an open-source Discord bot that lets Discord users play the popular two-player game 
-Four in a Row (called Connect Four by Hasbro) against each other. The project has two parts—the code for the bot written using the discord.py library (in the [bot](/bot) directory and a backend API written using Flask (in the [server](/server) directory). The Flask backend interacts with a MongoDB database storing game data. The bot uses the API to save completed games and retrieve player stats. 
+This project is an open-source [Discord](https://discord.com/) bot that lets Discord users play the popular two-player game Four in a Row (called Connect Four by Hasbro) against each other.
+
+The project has two parts:
+
+* **The Discord bot code**: The code for the bot uses the [discord.py](https://discordpy.readthedocs.io/en/stable/) library. The Discord bot code lives in the [bot](/bot) directory.
+* **The backend API**: The backend API is also written in Python and it's meant to run in a [Flask](https://flask.palletsprojects.com/en/2.3.x/quickstart/) server. The API code lives in the [server](/server) directory. The Flask-based backend API interacts with a [MongoDB](https://www.mongodb.com/) database. The MongoDB db stores game data. The Discord bot uses the API to save completed games in the MongoDB database and to retrieve player stats from the db. 
 
 **[Features](#features)**<br/> 
 **[Self-hosting Instructions](#self-hosting-instructions)**<br/>
@@ -18,16 +22,22 @@ only one game can be played at a time in a single channel.
   Users can also specify a custom number of pieces in a row to win the game.
 * By default, the bot randomly chooses which players starts first, but there is also support for the player 
   initiating the game to chose whether they want to start first or second.
-* A player can resign a game at any time. This will end the game and give the win to the other player.
+* A player can resign from a game at any time. This will end the game and give the win to the other player.
 * The bot detects and correctly handles invalid moves (such as a move by a player when it's not their turn, a move 
   in a column that's full, a move by a user who's not a participant in an active game)
-* The saves each game to after it has completed by making requests to the backend API. 
-* The bot allows users to view their stats (the number of games they have won, lost, and drawn. 
+* The bot saves each game to the MongoDB database after the game has completed by calling the backend API. 
+* The bot allows users to view their stats (the number of games they have won, lost, and drawn). 
 
 ### Backend 
-* The backend exposes an API method to save games to a MongoDB database. The backend supports storing the Discord User IDs of the two players who played the game, the IDs of the server and channel in which the game was played, the board configuration for the game (number of rows, columns, and pieces in a row to win), the moves played in the game, the result of the game, and the date and time when the game was completed.
-* The backend exposes an API method to retrieve stats for any user. Stats consist of the number of games the user has won, lost and drawn. Stats can also be queried for games played against a particular opponent, in a particular server or channel, and in a particular date and time range.
-* To protect user data, the backend is secured using an API key that must be sent as an authorization header with every request. A hashed version of the API key is stored on the MongoDB database. If you want to host this bot yourself, you will have to generate an API key and store it in the database manually (see the [Self-hosting instructions](#self-hosting-instructions) section for more information).
+* The backend API exposes an API method to save games to a MongoDB database. The API saves the following data in the database:
+  - The Discord User IDs of the two players who played the game,
+  - The IDs of the server and channel in which the game was played,
+  - The board configuration for the game (number of rows, columns, and pieces in a row to win),
+  - The moves played in the game,
+  - The result of the game, and
+  - The date and time when the game was completed.
+* The backend API exposes another API method to retrieve stats for any user. Stats consist of the number of games the user has won, lost and drawn. Stats can also be queried for games played against a particular opponent, in a particular server or channel, and in a particular date and time range.
+* To protect user data, the API is secured using an API key that must be sent as an authorization header with every request. A hashed version of the API key is stored in the MongoDB database. If you want to host this bot yourself, you will have to generate an API key and store it in the database manually (see the [Self-hosting instructions](#self-hosting-instructions) section for more information).
 
 ## Self-hosting Instructions
 
@@ -38,6 +48,7 @@ To run this bot, you will have to host it yourself. This will involve individual
 * Clone this repository: `git clone https://github.com/NikhilSDate/FourInARowBot.git`
 * Navigate to the `bot` directory. This is where the code for the bot is located
 * Install the requirements: `pip install -r requirements.txt`
+* Fetch your [Discord token](https://www.androidauthority.com/get-discord-token-3149920/). 
 * Create a file with the name `.env` in the `bot` directory. Paste the following line into this file:
   ```
   DISCORD_TOKEN=<your_discord_token>
@@ -48,8 +59,8 @@ To run this bot, you will have to host it yourself. This will involve individual
 ### B) Running the backend 
 Note: these instructions are for running the backend locally. If you want to run the backend on a cloud platform like Render or Vercel, you might have to manually add the `DB_URI` emvironment variable instead of using a `env` file. See the instructions below for the value of this environment variable.
 
-* Create a MongoDB database (either locally or in the cloud) to store game data. The backend will will store game data in a collection named `games` in this database. If you use MongoDB Atlas for this step, you will have to add the public IP address of the Flask backend to the IP Access List of the MongoDB Atlas project containing your database. 
-* Navigate to the server directory
+* Create a MongoDB database (either locally or in the cloud) to store game data. The database will store game data in a collection named `games`. If you use MongoDB Atlas for this step, you will have to add the public IP address of the Flask backend to the IP Access List of the MongoDB Atlas project containing your database. 
+* Navigate to the server directory.
 * Navigate to the `server` directory and create a file with the name `.env`. Paste the following line into this file (note that the connection string should have the database name at its end):
   ```
   DB_URI=<your_monngodb_connection_string>
@@ -59,9 +70,9 @@ Note: these instructions are for running the backend locally. If you want to run
   flask run --cert=adhoc
   ```
   This runs the aplication over HTTPS using a self-signed certificate. HTTPS is needed since the application receives an API key and sends and receives Discord User IDs, which should both be encrypted.
-* The Flask backend should be up and running. However, the bot won't be able to talk to the application just yet. The next sections explains how to integrate the bot with the backend 
+* The Flask backend should be up and running. However, the bot won't be able to talk to the application just yet. The next sections explain how to integrate the bot with the API backend.
 
-### C) Integrating the bot and the backend
+### C) Integrating the bot and the API backend
 * Generate an API key using a method of your choice. Use Python's `hashlib` module to hash the key using SHA256 as follows (where `key` is your API key and should be a string):
   ```python
   hashed_key = hashlib.sha256(key.enocode('utf-8')).hexdigest()
