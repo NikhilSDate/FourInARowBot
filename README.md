@@ -54,7 +54,7 @@ To run this bot, you will have to host it yourself. This will involve individual
   DISCORD_TOKEN=<your_discord_token>
   ```
 * Run the `main.py` script with `python main.py`. The bot should now be up and running.
-* Create an invite link for the bot in the Discord Developer Portal. You will need to specify permissions for the bot when doing so. The bot needs only the 'Send Messages` permission. A server administrator can now use the invite link (by pasting it into a browser) to add the bot to their server. You can also test out the bot now by creating a test server and inviting the bot to it. 
+* Create an invite link for the bot in the Discord Developer Portal. You will need to specify permissions for the bot when doing so. The bot needs only the 'Send Messages' permission. A server administrator can now use the invite link (by pasting it into a browser) to add the bot to their server. You can also test out the bot now by creating a test server and inviting the bot to it. 
 ### B) Running the backend 
 Note: these instructions are for running the backend locally. If you want to run the backend on a cloud platform like Render or Vercel, you might have to manually add the `DB_URI` emvironment variable instead of using a `env` file. See the instructions below for the value of this environment variable.
 
