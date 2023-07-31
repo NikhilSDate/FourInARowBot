@@ -5,7 +5,7 @@ This project is an open-source [Discord](https://discord.com/) bot that lets Dis
 The project has two parts:
 
 * **The Discord bot code**: The code for the bot uses the [discord.py](https://discordpy.readthedocs.io/en/stable/) library. The Discord bot code lives in the [bot](/bot) directory.
-* **The backend API**: The backend API is also written in Python and it's meant to run in a [Flask](https://flask.palletsprojects.com/en/2.3.x/quickstart/) server. The API code lives in the [server](/server) directory. The Flask-based backend API interacts with a [MongoDB](https://www.mongodb.com/) database. The MongoDB db stores game data. The Discord bot uses the API to save completed games in the MongoDB database and to retrieve player stats from the db. 
+* **The backend API**: The backend API is also written in Python and it's meant to run in a [Flask](https://flask.palletsprojects.com/en/2.3.x/quickstart/) server. The API code lives in the [server](/server) directory. The Flask-based backend API interacts with a [MongoDB](https://www.mongodb.com/) database. The MongoDB database stores game data. The Discord bot uses the API to save completed games in the MongoDB database and to retrieve player stats from the database. 
 
 **[Features](#features)**<br/> 
 **[Self-hosting Instructions](#self-hosting-instructions)**<br/>
@@ -48,12 +48,13 @@ To run this bot, you will have to host it yourself. This will involve individual
 * Clone this repository: `git clone https://github.com/NikhilSDate/FourInARowBot.git`
 * Navigate to the `bot` directory. This is where the code for the bot is located
 * Install the requirements: `pip install -r requirements.txt`
-* Fetch your [Discord token](https://www.androidauthority.com/get-discord-token-3149920/). 
+* Fetch your [Discord token](https://www.technobezz.com/how-to-get-a-discord-bot-token/). 
 * Create a file with the name `.env` in the `bot` directory. Paste the following line into this file:
   ```
   DISCORD_TOKEN=<your_discord_token>
   ```
 * Run the `main.py` script with `python main.py`. The bot should now be up and running.
+* Create an invite link for the bot. 
   
 
 ### B) Running the backend 
@@ -73,7 +74,7 @@ Note: these instructions are for running the backend locally. If you want to run
 * The Flask backend should be up and running. However, the bot won't be able to talk to the application just yet. The next sections explain how to integrate the bot with the API backend.
 
 ### C) Integrating the bot and the API backend
-* Generate an API key using a method of your choice. Use Python's `hashlib` module to hash the key using SHA256 as follows (where `key` is your API key and should be a string):
+* Generate an API key using a method of your choice. For example, you could use the `token_hex()` method of Python's `secrets` module to generate a random hexadecimal text string to use as the API key. Once you have an API key, use Python's `hashlib` module to hash the key using SHA256 as follows (where `key` is your API key and should be a string):
   ```python
   hashed_key = hashlib.sha256(key.enocode('utf-8')).hexdigest()
   ```
