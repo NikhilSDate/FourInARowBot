@@ -98,94 +98,6 @@ def evaluation_function(board: ConnectFourBoard):
     return color_evaluation(Color.FIRST) - color_evaluation(Color.SECOND)
 
 
-# def actions(board: ConnectFourBoard, color: Color):
-#     action_list = [i for i in range(board.shape[1]) if board.envelope(i) != board.shape[0]]
-# #    return action_list
-#     key = {}
-#     for action in action_list:
-#         result = copy.deepcopy(board)
-#         result.do_move(action, color)
-#         board_tuple = tuple(result.board.flatten())
-#         key[action] = iterative_deepening_search.table.get(board_tuple, 0)
-#     sorted_actions = sorted(action_list, key=lambda i: key[i])
-#     if color == Color.FIRST:
-#         return list(reversed(sorted_actions))
-#     else:
-#         return sorted_actions
-
-
-# def terminal(board: ConnectFourBoard, loc) -> bool:
-#     return board.full() or board.eval_game_state(loc, Color.FIRST) or board.eval_game_state(loc, Color.SECOND)
-
-
-# def cutoff_test(board: ConnectFourBoard, loc, depth) -> bool:
-#     return loc is not None and terminal(board, loc) or depth > alpha_beta_search.depth
-
-
-# def iterative_deepening_search(board, color, max_dep=7):
-#     iterative_deepening_search.table = {}
-#     for depth in range(max_dep):
-#         v, action = alpha_beta_search(board, color, depth)
-#         print(depth, v, action)
-#     return v, action
-#
-#
-# # max_depth = 4
-#
-#
-# def alpha_beta_search(board: ConnectFourBoard, color: Color, depth: int) -> Tuple[float, int]:
-#     alpha_beta_search.depth = depth
-#     if color == Color.FIRST:
-#         v, action = max_value(board, -np.inf, np.inf, None, 0)
-#     else:
-#         v, action = min_value(board, -np.inf, np.inf, None, 0)
-#     return v, action
-#
-#
-# def max_value(board: ConnectFourBoard, alpha: float, beta: float, previous_loc, depth: int) -> Tuple[
-#     float, int]:
-#     if cutoff_test(board, previous_loc, depth):
-#         return evaluation_function(board), -1
-#     v = -np.inf
-#     legal_actions = actions(board, Color.FIRST)
-#     best_action = legal_actions[0]
-#     for action in legal_actions:
-#         result = copy.deepcopy(board)
-#         result.do_move(action, Color.FIRST)
-#         loc = (result.envelope(action) - 1, action)
-#         min_val = min_value(result, alpha, beta, loc, depth + 1)[0]
-#         iterative_deepening_search.table[tuple(result.board.flatten())] = min_val
-#
-#         if min_val > v:
-#             best_action = action
-#             v = min_val
-#         if v >= beta:
-#             return v, action
-#         alpha = max(alpha, v)
-#     return v, best_action
-#
-#
-# def min_value(board: ConnectFourBoard, alpha: float, beta: float, previous_loc, depth: int) -> Tuple[
-#     float, int]:
-#     if cutoff_test(board, previous_loc, depth):
-#         return evaluation_function(board), -1
-#     v = np.inf
-#     legal_actions = actions(board, Color.SECOND)
-#     best_action = legal_actions[0]
-#     for action in legal_actions:
-#         result = copy.deepcopy(board)
-#         result.do_move(action, Color.SECOND)
-#         loc = (result.envelope(action) - 1, action)
-#         max_val = max_value(result, alpha, beta, loc, depth + 1)[0]
-#         iterative_deepening_search.table[tuple(result.board.flatten())] = max_val
-#         if max_val < v:
-#             best_action = action
-#             v = max_val
-#         if v <= alpha:
-#             return v, action
-#         beta = min(beta, v)
-#     return v, best_action
-
 class IterativeDeepeningWithTimeout(threading.Thread):
     def __init__(self, board: ConnectFourBoard, color: Color, max_dep: int, event: threading.Event):
         super().__init__()
@@ -196,18 +108,19 @@ class IterativeDeepeningWithTimeout(threading.Thread):
         self.result = (-1, -1)
         self.result_lock = threading.Lock()
         self.table = {}
-        self.current_depth = 0
+        self.current_depth = 1
 
     def run(self):
         self.iterative_deepening_search()
 
     def iterative_deepening_search(self):
-        for depth in range(self.max_dep):
+        v, action = -1, -1
+        for depth in range(1, self.max_dep + 1):
             v, action = self.alpha_beta_search(self.board, self.color, depth)
             self.result_lock.acquire()
             self.result = v, action
             self.result_lock.release()
-            logging.getLogger(__name__).error(f'Completed depth {depth}')
+            logging.getLogger(__name__).info(f'Completed depth {depth}')
         #            print(depth, v, action)
         return v, action
 
@@ -222,7 +135,7 @@ class IterativeDeepeningWithTimeout(threading.Thread):
     def cutoff_test(self, board: ConnectFourBoard, loc, depth) -> bool:
         if self.event.is_set():
             sys.exit()
-        return loc is not None and self.terminal(board, loc) or depth > self.current_depth
+        return loc is not None and self.terminal(board, loc) or depth >= self.current_depth
 
     def max_value(self, board: ConnectFourBoard, alpha: float, beta: float, previous_loc, depth: int) -> Tuple[
         float, int]:
@@ -288,49 +201,49 @@ class IterativeDeepeningWithTimeout(threading.Thread):
 
 if __name__ == '__main__':
     board = ConnectFourBoard()
-    board.do_moves([
-        (0, Color.FIRST),
-        (2, Color.SECOND),
-        (1, Color.FIRST),
-        (3, Color.FIRST)
-    ])
-    print(evaluation_function(board))
+    # board.do_moves([
+    #     (0, Color.FIRST),
+    #     (2, Color.SECOND),
+    #     (1, Color.FIRST),
+    #     (3, Color.FIRST)
+    # ])
+    # print(evaluation_function(board))
 
-    # board = ConnectFourBoard()
-    # board.do_moves([(3, Color.FIRST),
-    #                 (3, Color.SECOND),
-    #                 (3, Color.FIRST),
-    #                 (1, Color.SECOND),
-    #                 (3, Color.FIRST),
-    #                 (5, Color.SECOND),
-    #                 (3, Color.FIRST),
-    #                 (3, Color.SECOND),
-    #                 (5, Color.FIRST),
-    #                 (5, Color.SECOND),
-    #                 (1, Color.FIRST),
-    #                 (1, Color.SECOND),
-    #                 (0, Color.FIRST),
-    #                 (5, Color.SECOND),
-    #                 (6, Color.FIRST),
-    #                 (5, Color.SECOND),
-    #                 (5, Color.FIRST),
-    #                 (1, Color.SECOND),
-    #                 (1, Color.FIRST),
-    #                 (4, Color.SECOND),
-    #                 (4, Color.FIRST)
-    #                 ])
-    # print(board.board)
-    # e = threading.Event()
-    # t = IterativeDeepeningWithTimeout(board, Color.SECOND, 15, e)
-    # before = time.perf_counter()
-    # t.start()
-    # t.join(9.75)
-    # t.result_lock.acquire()
-    # e.set()
-    # print(t.result)
-    # t.result_lock.release()
-    # t.join()
-    # after = time.perf_counter()
-    # print(after - before)
+    board = ConnectFourBoard()
+    board.do_moves([(3, Color.FIRST),
+                    (3, Color.SECOND),
+                    (3, Color.FIRST),
+                    (1, Color.SECOND),
+                    (3, Color.FIRST),
+                    (5, Color.SECOND),
+                    (3, Color.FIRST),
+                    (3, Color.SECOND),
+                    (5, Color.FIRST),
+                    (5, Color.SECOND),
+                    (1, Color.FIRST),
+                    # (1, Color.SECOND),
+                    # (0, Color.FIRST),
+                    # (5, Color.SECOND),
+                    # (6, Color.FIRST),
+                    # (5, Color.SECOND),
+                    # (5, Color.FIRST),
+                    # (1, Color.SECOND),
+                    # (1, Color.FIRST),
+                    # (4, Color.SECOND),
+                    # (4, Color.FIRST)
+                    ])
+    print(board.board)
+    e = threading.Event()
+    t = IterativeDeepeningWithTimeout(board, Color.SECOND, 7, e)
+    before = time.perf_counter()
+    t.start()
+    t.join(9.75)
+    t.result_lock.acquire()
+    e.set()
+    print(t.result)
+    t.result_lock.release()
+    t.join()
+    after = time.perf_counter()
+    print(after - before)
 
     # 6
