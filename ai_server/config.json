@@ -1,0 +1,6 @@
+{
+  "engine": {
+    "TIME_LIMIT": 9.75,
+    "MAX_DEPTH": 20
+  }
+}

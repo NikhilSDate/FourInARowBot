@@ -121,7 +121,6 @@ class IterativeDeepeningWithTimeout(threading.Thread):
             self.result = v, action
             self.result_lock.release()
             logging.getLogger(__name__).info(f'Completed depth {depth}')
-        #            print(depth, v, action)
         return v, action
 
     def alpha_beta_search(self, board: ConnectFourBoard, color: Color, depth: int) -> Tuple[float, int]:
@@ -201,6 +200,7 @@ class IterativeDeepeningWithTimeout(threading.Thread):
 
 if __name__ == '__main__':
     board = ConnectFourBoard()
+    logging.basicConfig(level=logging.DEBUG)
     # board.do_moves([
     #     (0, Color.FIRST),
     #     (2, Color.SECOND),
@@ -210,17 +210,18 @@ if __name__ == '__main__':
     # print(evaluation_function(board))
 
     board = ConnectFourBoard()
-    board.do_moves([(3, Color.FIRST),
-                    (3, Color.SECOND),
+    board.do_moves([
                     (3, Color.FIRST),
+                    (5, Color.SECOND),
+                    (2, Color.FIRST),
                     (1, Color.SECOND),
                     (3, Color.FIRST),
                     (5, Color.SECOND),
                     (3, Color.FIRST),
                     (3, Color.SECOND),
-                    (5, Color.FIRST),
-                    (5, Color.SECOND),
-                    (1, Color.FIRST),
+                    # (5, Color.FIRST),
+                    # (5, Color.SECOND),
+                    # (1, Color.FIRST),
                     # (1, Color.SECOND),
                     # (0, Color.FIRST),
                     # (5, Color.SECOND),
@@ -232,9 +233,8 @@ if __name__ == '__main__':
                     # (4, Color.SECOND),
                     # (4, Color.FIRST)
                     ])
-    print(board.board)
     e = threading.Event()
-    t = IterativeDeepeningWithTimeout(board, Color.SECOND, 7, e)
+    t = IterativeDeepeningWithTimeout(board, Color.FIRST, 10, e)
     before = time.perf_counter()
     t.start()
     t.join(9.75)

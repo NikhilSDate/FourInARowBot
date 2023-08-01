@@ -1,29 +1,38 @@
+import logging
 import threading
-import timeit
 
 import numpy as np
 from flask import Flask, request, jsonify
+import json
 from numpy import vectorize
 
 from engine.colors import Color
 from engine.connect_four_board import ConnectFourBoard
-# from engine.minimax import alpha_beta_search, iterative_deepening_search
 from engine.minimax import IterativeDeepeningWithTimeout
+
 app = Flask(__name__)
+
+logging.basicConfig(level=logging.INFO)
+
+with open('config.json', 'r') as f:
+    content = f.read()
+    config = json.loads(content)
+    app.config['engine'] = config['engine']
 
 
 @app.route('/evaluate', methods=['GET'])
 def evaluate():
     board = request.args.get('board')
     color = request.args.get('color')
-    depth = int(request.args.get('depth', 4))
     board = decode_board(board)
     color = decode_color(color)
-    v, action = evaluate_helper(board, color, 20, 9.75)
+    time_limit = app.config['engine']['TIME_LIMIT']
+    max_depth = app.config['engine']['MAX_DEPTH']
+    v, action = evaluate_helper(board, color, time_limit, max_depth)
     return jsonify({"v": v, "action": action})
 
 
-def evaluate_helper(board, color, max_depth, time_limit):
+def evaluate_helper(board, color, time_limit, max_depth):
     e = threading.Event()
     t = IterativeDeepeningWithTimeout(board, color, max_depth, e)
     t.start()
