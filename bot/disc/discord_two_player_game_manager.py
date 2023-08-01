@@ -29,7 +29,7 @@ class DiscordTwoPlayerGameManager:
         if channel not in self.games or player_id not in self.games[channel].players:
             return Status.NO_ACTIVE_GAME
         status = self.games[channel].do_move(column, self.games[channel].get_player_color(player_id))
-        if status == Status.OK:
+        if status not in StatusType.ERROR:
             await self._print_board(channel)
         if status in StatusType.GAME_OVER:
             await self._handle_game_over(channel)

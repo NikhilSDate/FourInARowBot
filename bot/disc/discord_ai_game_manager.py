@@ -32,9 +32,8 @@ class DiscordAIGameManager:
         if status == Status.OK:
             await self._print_board(channel)
             status = await self._do_ai_move(channel)
-            if status in StatusType.GAME_OVER:
-                await self._print_board(channel)
         if status in StatusType.GAME_OVER:
+            await self._print_board(channel)
             await self._handle_game_over(channel)
         return status
 
