@@ -1,3 +1,4 @@
 {
-  "DATA_API_URL": "https://four-in-a-row-data.vercel.app"
+  "DATA_API_URL": "https://four-in-a-row-data.vercel.app",
+  "AI_API_URL": "https://four-in-a-row-ai-git-iterativedeepening-nikhilsdate.vercel.app"
 }

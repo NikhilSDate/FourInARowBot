@@ -8,7 +8,9 @@ from discord.ext import commands
 from discord.ext.commands import Context
 
 from dotenv import load_dotenv
-from disc.discord_game_manager import DiscordGameManager
+
+from disc.discord_manager import DiscordManager
+from disc.discord_two_player_game_manager import DiscordTwoPlayerGameManager
 from disc.help_command import MyHelp
 from game.statuses import Status, StatusType
 from api_wrapper.data_api import DataAPI
@@ -20,7 +22,7 @@ if __name__ == "__main__":
 
     intents = Intents.all()
     bot = commands.Bot(command_prefix="!", intents=intents, help_command=MyHelp())
-    game_manager = DiscordGameManager()
+    discord_manager = DiscordManager()
     data_api = DataAPI()
 
     error_messages = {Status.CHANNEL_BUSY: 'A game is currently in progress in this channel.',
@@ -37,7 +39,7 @@ if __name__ == "__main__":
     async def newgame(ctx: Context, other_player_mention: str, mode: str = 'random', rows: int = 6, columns: int = 7, winning_length: int = 4):
 
         author_id = str(ctx.author.id)
-        other_player_id = user_id_from_mention(other_player_mention)
+        other_player_id = 'ai' if other_player_mention == 'ai' else user_id_from_mention(other_player_mention)
 
         if mode == 'first':
             ids = [author_id, other_player_id]
@@ -50,32 +52,24 @@ if __name__ == "__main__":
             await ctx.send('The second argument of newgame \nmust be \'random\', \'first\', or \'second\'')
             return
 
-        status = await game_manager.new_game(channel=ctx.channel, guild=ctx.guild, first_player_id=ids[0],
+        status = await discord_manager.new_game(channel=ctx.channel, guild=ctx.guild, first_player_id=ids[0],
                                              second_player_id=ids[1], dims=(rows, columns),
                                              winning_length=winning_length)
 
         if status != Status.OK:
             await ctx.send(error_messages[status])
-        else:
-            await game_manager.print_board(ctx.channel)
-
 
     @bot.command(help='Play a move\nExample usage: `!move 4`')
     async def move(ctx: Context, column: int):
         zero_indexed_column = column - 1
-        status = game_manager.do_move(channel=ctx.channel, player_id=str(ctx.author.id), column=zero_indexed_column)
+        status = await discord_manager.do_move(channel=ctx.channel, player_id=str(ctx.author.id), column=zero_indexed_column)
         if status in StatusType.ERROR:
             await ctx.send(error_messages[status])
-        else:
-            await game_manager.print_board(channel=ctx.channel)
-
-        if status in StatusType.GAME_OVER:
-            await game_manager.handle_game_over(ctx.channel)
 
 
     @bot.command(help='Resign the game\n Example usage: !resign')
     async def resign(ctx: Context):
-        status = await game_manager.handle_resign(ctx.channel, str(ctx.author.id))
+        status = await discord_manager.handle_resign(ctx.channel, str(ctx.author.id))
         if status in StatusType.ERROR:
             await ctx.send(error_messages[status])
 

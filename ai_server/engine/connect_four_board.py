@@ -1,12 +1,13 @@
 from typing import Tuple, Sequence
 from numpy.typing import NDArray
-from game.colors import Color
+from engine.colors import Color
 import numpy as np
-from game.statuses import Status
+from engine.statuses import Status
 
 
 class ConnectFourBoard:
     def __init__(self, dims: tuple = (6, 7)):
+        # TODO: try to optimize by making values in board array ints
         self._board = np.full(shape=dims, fill_value=Color.EMPTY, dtype=object)
         self._envelope = np.zeros(shape=(dims[1],), dtype=int)
 

@@ -1,7 +1,7 @@
 import os
 
 from api_wrapper.utils import Singleton
-from disc.discord_game import DiscordGame
+from disc.discord_two_player_game import DiscordTwoPlayerGame
 from game.statuses import Status
 import json
 import aiohttp
@@ -23,7 +23,7 @@ class DataAPI(metaclass=Singleton):
     def authorization_header(self):
         return {'Authorization': self.api_key}
 
-    async def save_discord_game(self, game: DiscordGame):
+    async def save_discord_game(self, game: DiscordTwoPlayerGame):
 
         url = self.DATA_API_URL + "/add-game"
         body = {
