@@ -1,11 +1,8 @@
-import warnings
 from typing import Tuple
 
-from disc.utils import ping
 from disc.discord_mixin import DiscordMixin
 from game.colors import Color
 from game.game import Game
-from game.statuses import Status, StatusError, StatusType
 
 
 class DiscordTwoPlayerGame(Game, DiscordMixin):

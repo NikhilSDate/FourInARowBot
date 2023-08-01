@@ -1,5 +1,3 @@
-from typing import Tuple, Optional
-
 from api_wrapper.ai_api import AIAPI
 from game.colors import Color
 from game.game import Game

@@ -1,4 +1,4 @@
-from typing import Set, Tuple
+from typing import Tuple
 
 from discord import Guild
 from discord.abc import Messageable

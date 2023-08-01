@@ -1,9 +1,7 @@
-from typing import Dict, Tuple, Union
+from typing import Dict, Tuple
 from discord import Guild
 from discord.abc import Messageable
 from disc.discord_ai_game import DiscordAIGame
-from disc.discord_two_player_game import DiscordTwoPlayerGame
-from game.colors import Color
 from game.statuses import Status, StatusType
 from api_wrapper.data_api import DataAPI
 

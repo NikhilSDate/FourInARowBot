@@ -1,9 +1,6 @@
-from typing import Optional
-
 from ai.ai_game import AIGame
 from disc.discord_mixin import DiscordMixin
 from game.colors import Color
-from game.statuses import Status
 
 
 class DiscordAIGame(AIGame, DiscordMixin):

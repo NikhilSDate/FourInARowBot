@@ -1,8 +1,8 @@
-from typing import Mapping, Optional, List, Any
+from typing import Mapping, Optional, List
 
 import discord
 from discord import Embed
-from discord.ext.commands import HelpCommand, MinimalHelpCommand, Cog, Command, DefaultHelpCommand
+from discord.ext.commands import MinimalHelpCommand, Cog, Command
 
 
 class MyHelp(MinimalHelpCommand):
