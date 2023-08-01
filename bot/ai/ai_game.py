@@ -1,6 +1,6 @@
 from typing import Tuple, Optional
 
-from api_wrapper.ai_api import AIApi
+from api_wrapper.ai_api import AIAPI
 from game.colors import Color
 from game.game import Game
 from game.statuses import Status
@@ -16,7 +16,7 @@ class AIGame(Game):
         else:
             self.ai_color = Color.FIRST
         self.status = Status.OK
-        self.ai_api = AIApi()
+        self.ai_api = AIAPI()
 
     def do_move(self, column: int, _: Color = None) -> Status:
         return super().do_move(column, self.human_color)

@@ -4,20 +4,20 @@ from discord import Guild
 
 from discord.abc import Messageable
 
-from disc.discord_game import DiscordGame
+from disc.discord_two_player_game import DiscordTwoPlayerGame
 from game.statuses import Status, StatusType
 from api_wrapper.data_api import DataAPI
 
 
 class DiscordTwoPlayerGameManager:
     def __init__(self):
-        self.games: Dict[Messageable, DiscordGame] = {}
+        self.games: Dict[Messageable, DiscordTwoPlayerGame] = {}
         self.data_api = DataAPI()
 
     async def new_game(self, channel: Messageable, guild: Guild, first_player_id: str, second_player_id: str, dims: Tuple[int, int] = (6, 7), winning_length: int = 4) -> Status:
         if channel in self.games:
             return Status.CHANNEL_BUSY
-        self.games[channel] = DiscordGame(dims=dims, winning_length=winning_length, guild=guild, channel=channel, first_player_id=first_player_id, second_player_id=second_player_id)
+        self.games[channel] = DiscordTwoPlayerGame(dims=dims, winning_length=winning_length, guild=guild, channel=channel, first_player_id=first_player_id, second_player_id=second_player_id)
         await channel.send(self.games[channel].color_assignment_to_message())
         await self._print_board(channel)
         return Status.OK
