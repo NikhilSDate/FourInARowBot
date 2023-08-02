@@ -34,7 +34,7 @@ if __name__ == "__main__":
 
 
     @bot.command(help="Create a new game."
-                      "\n\nTo play against an AI, write `ai` (no need for the @ symbol) for the `<other_player_mention` argument"
+                      "\n\nTo play against an AI, specify `ai` (no need for an @ symbol) for the `<other_player_mention>` argument."
                       "\nThe `mode` argument controls which player starts first and must be either `first`,`second`, or `random`."
                       "\n\nExample usage for playing against another player: \n`!newgame @foobar second 8 8 4`"
                       "\n\nExample usage for playing against AI: \n`!newgame ai`")
@@ -61,7 +61,7 @@ if __name__ == "__main__":
         if status != Status.OK:
             await ctx.send(error_messages[status])
 
-    @bot.command(help='Play a move\nExample usage: `!move 4`')
+    @bot.command(help='Play a move\nExample usage: \n`!move 4`')
     async def move(ctx: Context, column: int):
         zero_indexed_column = column - 1
         status = await discord_manager.do_move(channel=ctx.channel, player_id=str(ctx.author.id), column=zero_indexed_column)
@@ -69,7 +69,7 @@ if __name__ == "__main__":
             await ctx.send(error_messages[status])
 
 
-    @bot.command(help='Resign the game\n Example usage: !resign')
+    @bot.command(help='Resign the game\n Example usage: \n!resign')
     async def resign(ctx: Context):
         status = await discord_manager.handle_resign(ctx.channel, str(ctx.author.id))
         if status in StatusType.ERROR:
@@ -77,8 +77,8 @@ if __name__ == "__main__":
 
 
     @bot.command(help="Get your stats"
-                      "\n\nAllowed filters are `against: @user`, `server: current` (for games played in the current server only),`from: YYYY-MM-DD`, `to: YYYY-MM-DD` and `channel: #channel`"
-                      "\n\nExample usage: `!stats against: @foobar server: current from: 2023-01-01 channel: #general`")
+                      "\n\nAllowed filters are `against: @user`, `server: current` (to get stats for games played in the current server),`from: YYYY-MM-DD`, `to: YYYY-MM-DD` and `channel: #channel`"
+                      "\n\nExample usage: \n`!stats against: @foobar server: current from: 2023-01-01 channel: #general`")
     async def stats(ctx: Context, *, filters=''):
         user_id = str(ctx.author.id)
         filters = parse_colon_arguments(filters, options=['against', 'server', 'from', 'to', 'channel', 'mode'])
