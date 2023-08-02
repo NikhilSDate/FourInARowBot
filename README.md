@@ -1,17 +1,19 @@
 # Four in a Row Bot
 
-This project is an open-source [Discord](https://discord.com/) bot that lets Discord users play the popular two-player game Four in a Row (called Connect Four by Hasbro) against each other.
+This project is an open-source Discord bot that lets Discord users play the popular two-player game Four in a Row (called Connect Four by Hasbro) against each other.
 
-The project has two parts:
+The project has three parts:
 
-* **The Discord bot code**: The code for the bot uses the [discord.py](https://discordpy.readthedocs.io/en/stable/) library. The Discord bot code lives in the [bot](/bot) directory.
-* **The backend API**: The backend API is also written in Python and it's meant to run in a [Flask](https://flask.palletsprojects.com/en/2.3.x/quickstart/) server. The API code lives in the [server](/server) directory. The Flask-based backend API interacts with a [MongoDB](https://www.mongodb.com/) database. The MongoDB database stores game data. The Discord bot uses the API to save completed games in the MongoDB database and to retrieve player stats from the database. 
+* **The Discord bot code**: The code for the bot uses the [discord.py](https://discordpy.readthedocs.io/en/stable/) library and lives in the [bot](/bot) directory.
+* **The Data API**: The Data API is written in Python using the [Flask](https://flask.palletsprojects.com/en/2.3.x/quickstart/) framework. The code for the Data API lives in the [server](/server) directory. The data API interacts with a [MongoDB](https://www.mongodb.com/) database that stores game data. The Discord bot uses the Data API to save completed games to the MongoDB database and to retrieve player stats from the database. 
+* **The AI API**: The AI API is also written in Python using the Flask framework. The code for the AI API lives in the [ai_server](/ai_server) directory. The AI API uses the minimax algorithm with alpha-beta pruning and iterative deepening to return an evaluation and move suggestion given a game position. The Discord bot uses the AI API to let human players against the AI. 
 
 **[Features](#features)**<br/> 
 **[Self-hosting Instructions](#self-hosting-instructions)**<br/>
 **[Video Demo](#video-demo)**<br/>
 **[Screenshots](#screenshots)**<br/>
 **[Bot Usage](#bot-usage)**<br/>
+
 ## Features
 ### Bot
 
@@ -27,23 +29,32 @@ only one game can be played at a time in a single channel.
   in a column that's full, a move by a user who's not a participant in an active game)
 * The bot saves each game to the MongoDB database after the game has completed by calling the backend API. 
 * The bot allows users to view their stats (the number of games they have won, lost, and drawn). 
+* The bot lets human players play against an AI. The AI is quite strong and offers a tough challenge to a casual player. 
 
-### Backend 
-* The backend API exposes an API method to save games to a MongoDB database. The API saves the following data in the database:
+### Data API 
+* The Data API exposes an API endpoint to save games to a MongoDB database. The API saves the following data in the database:
   - The Discord User IDs of the two players who played the game,
   - The IDs of the server and channel in which the game was played,
   - The board configuration for the game (number of rows, columns, and pieces in a row to win),
   - The moves played in the game,
   - The result of the game, and
   - The date and time when the game was completed.
-* The backend API exposes another API method to retrieve stats for any user. Stats consist of the number of games the user has won, lost and drawn. Stats can also be queried for games played against a particular opponent, in a particular server or channel, and in a particular date and time range.
-* To protect user data, the API is secured using an API key that must be sent as an authorization header with every request. A hashed version of the API key is stored in the MongoDB database. If you want to host this bot yourself, you will have to generate an API key and store it in the database manually (see the [Self-hosting instructions](#self-hosting-instructions) section for more information).
+* The Data API exposes another API endpoint to retrieve stats for any user. Stats consist of the number of games the user has won, lost and drawn. Stats can also be queried for games played against a particular opponent, in a particular server or channel, and in a particular date and time range.
+* To protect user data, the Data API is secured using an API key that must be sent as an authorization header with every request. A hashed version of the API key is stored in the MongoDB database. If you want to host this bot yourself, you will have to generate an API key and store it in the database manually (see the [Self-hosting instructions](#self-hosting-instructions) section for more information).
+
+### AI API
+
+* The AI API exposes an API endpoint to get an evaluation and move suggestion for a given game position. A game position consists of the board state and the color of the player whose turn it is to play.
+* The AI API uses minimax with alpha-beta pruning and iterative deepening. Iterative deepening means that the AI will repeatedly search to ever increasing depths starting from 1; that is, it will first search to depth 1, then to depth 2, then depth 3, and so on. Iterative deepening offers a number of advantages:
+  * The effectiveness of alpha-beta pruning depends on the order in which nodes at a particular depth are searched. With iterative deepening, position evaluations from searching to depth n - 1 can be used to improve move ordering at depth n by searching the nodes first at depth n that had the best evaluations at depth n - 1. This speeds up the search at depth n.
+  * Iterative deepening allows a time limit to be set for the AI. The AI will then return the results from the deepest search that completed before the time limit was hit. This means that, given the same time limit, the AI will automatically search deeper when it has more computing power available.
+* The AI API can be configured with time and depth limits. The AI stops searching when it hits either the time limit or the depth limit and returns the result of the deepest completed search.  
 
 ## Self-hosting Instructions
 
-To run this bot, you will have to host it yourself. This will involve individually hosting the bot and the Flask backend application. The bot can, however, run without the Flask backend; it will simply lack the ability to save completed games and display user stats. 
+To run this bot, you will have to host it yourself. This will involve individually hosting three applications: the bot and a Flask backend application each for the Data API and the AI API. The bot can, however, run without any or both of the two APIs; it will simply lack the features that rely on the missing API or APIs. 
 
-### A) Installing and running the bot without the backend
+### A) Installing and running the bot without the backend APIs
 
 * Clone this repository: `git clone https://github.com/NikhilSDate/FourInARowBot.git`
 * Navigate to the `bot` directory. This is where the code for the bot is located
@@ -54,13 +65,14 @@ To run this bot, you will have to host it yourself. This will involve individual
   DISCORD_TOKEN=<your_discord_token>
   ```
 * Run the `main.py` script with `python main.py`. The bot should now be up and running.
-* Create an invite link for the bot in the Discord Developer Portal. You will need to specify permissions for the bot when doing so. The bot needs only the 'Send Messages' permission. A server administrator can now use the invite link (by pasting it into a browser) to add the bot to their server. You can also test out the bot now by creating a test server and inviting the bot to it. 
-### B) Running the backend 
+* Create an invite link for the bot in the Discord Developer Portal. You will need to specify permissions for the bot when doing so. The bot needs only the 'Send Messages' permission. A server administrator can now use the invite link (by pasting it into a browser) to add the bot to their server. You can also test out the bot now by creating a test server and inviting the bot to it.
+
+### B) Running the Data API 
 Note: these instructions are for running the backend locally. If you want to run the backend on a cloud platform like Render or Vercel, you might have to manually add the `DB_URI` emvironment variable instead of using a `env` file. See the instructions below for the value of this environment variable.
 
 * Create a MongoDB database (either locally or in the cloud) to store game data. The database will store game data in a collection named `games`. If you use MongoDB Atlas for this step, you will have to add the public IP address of the Flask backend to the IP Access List of the MongoDB Atlas project containing your database. 
-* Navigate to the server directory.
-* Navigate to the `server` directory and create a file with the name `.env`. Paste the following line into this file (note that the connection string should have the database name at its end):
+* Navigate to the `server` directory.
+* In the `server` directory, create a file named `.env`. Paste the following line into this file (note that the connection string should have the database name at its end):
   ```
   DB_URI=<your_monngodb_connection_string>
   ```
@@ -69,9 +81,20 @@ Note: these instructions are for running the backend locally. If you want to run
   flask run --cert=adhoc
   ```
   This runs the aplication over HTTPS using a self-signed certificate. HTTPS is needed since the application receives an API key and sends and receives Discord User IDs, which should both be encrypted.
-* The Flask backend should be up and running. However, the bot won't be able to talk to the application just yet. The next sections explain how to integrate the bot with the API backend.
+* The Flask application for the Data API should be up and running. However, the bot won't be able to talk to the application just yet. [Section D](#d\)-integrating-the-bot-with-the-data-api-and-server-api) explains how to integrate the bot with the Data API.
 
-### C) Integrating the bot and the API backend
+### C) Running the AI API
+Note: As with the previous section, the instructions in this section are for running the backend locally. Unlike the Data API, however, the AI API does not need access to any external resources (like a database), so there is no need to configure a `.env` file.
+
+* Navigate to the `ai_server` directory.
+* Edit the values for `TIME_LIMIT` and `MAX_DEPTH` in the `config.json` file in the `ai_server` directory if you want to change the time and/or depth limit for the AI. The `TIME_LIMIT` value is in seconds. The AI stops searching when it hits either the time limit or the depth limit and returns the result of the deepest completed search. The default value for `TIME_LIMIT` is `9.75` (for a 10-second limit with some margin for overheads). The default value for `MAX_DEPTH` is `20`
+* The Flask application is contained in the `app.py` file in the `ai_server` directory. You can run the application locally by executing the following command from the `ai_server` directory:
+  ```
+  flask run
+  ```
+* The Flask application for the AI API should be up and running. However, the bot won't be able to talk to the application just yet. [Section D](#d\)-integrating-the-bot-with-the-data-api-and-server-api) explains how to integrate the bot with the Data API.
+
+### D) Integrating the bot with the Data API and AI APIs
 * Generate an API key using a method of your choice. For example, you could use the `token_hex()` method of Python's `secrets` module to generate a random hexadecimal text string to use as the API key. Once you have an API key, use Python's `hashlib` module to hash the key using SHA256 as follows (where `key` is your API key and should be a string):
   ```python
   hashed_key = hashlib.sha256(key.enocode('utf-8')).hexdigest()
@@ -92,10 +115,11 @@ Note: these instructions are for running the backend locally. If you want to run
 *  Open the `config.json` file in the bot directory and enter the following text:
   ```javascript
   {
-    "DATA_API_URL": "<url_of_the_flask_backend>",
+    "DATA_API_URL": "<url_of_the_data_api>",
+    "AI_API_URL": "<url_of_the_ai_api>"
   }
   ```
-* Stop the `main.py` script if it is still running from when you ran it in Part A and run it again with `python main.py`. The bot should now be able to talk to the API.
+* Stop the `main.py` script if it is still running from when you ran it in Part A and run it again with `python main.py`. The bot should now be able to talk to the Data and AI APIs.
   
 ## Video Demo
 
