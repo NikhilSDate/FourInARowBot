@@ -123,9 +123,15 @@ Note: As with the previous section, the instructions in this section are for run
   ```
 * Stop the `main.py` script if it is still running from when you ran it in Part A and run it again with `python main.py`. The bot should now be able to talk to the Data and AI APIs.
   
-## Video Demo
+## Video Demos
+
+### A game between two Discord users
 
 https://github.com/NikhilSDate/FourInARowBot/assets/47920034/8dfe280b-bb10-4135-884b-9693179681fe
+
+### A game between a Discord user and the AI
+
+https://github.com/NikhilSDate/FourInARowBot/assets/47920034/b108a7cd-730a-472d-b9d4-30650663c70f
 
 ## Screenshots
 
