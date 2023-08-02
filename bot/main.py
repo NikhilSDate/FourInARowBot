@@ -34,8 +34,10 @@ if __name__ == "__main__":
 
 
     @bot.command(help="Create a new game."
-                      "\n\nThe `mode` argument controls which player starts first and must be either `first`,`second`, or `random`."
-                      "\n\nExample usage: `!newgame @foobar second 8 8 4`")
+                      "\n\nTo play against an AI, write `ai` (no need for the @ symbol) for the `<other_player_mention` argument"
+                      "\nThe `mode` argument controls which player starts first and must be either `first`,`second`, or `random`."
+                      "\n\nExample usage for playing against another player: \n`!newgame @foobar second 8 8 4`"
+                      "\n\nExample usage for playing against the AI: \n!newgame ai")
     async def newgame(ctx: Context, other_player_mention: str, mode: str = 'random', rows: int = 6, columns: int = 7, winning_length: int = 4):
 
         author_id = str(ctx.author.id)
