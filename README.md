@@ -81,7 +81,7 @@ Note: these instructions are for running the backend locally. If you want to run
   flask run --cert=adhoc
   ```
   This runs the aplication over HTTPS using a self-signed certificate. HTTPS is needed since the application receives an API key and sends and receives Discord User IDs, which should both be encrypted.
-* The Flask application for the Data API should be up and running. However, the bot won't be able to talk to the application just yet. [Section D](#d\)-integrating-the-bot-with-the-data-api-and-server-api) explains how to integrate the bot with the Data API.
+* The Flask application for the Data API should be up and running. However, the bot won't be able to talk to the application just yet. [Section D](#d\)-integrating-the-bot-with-the-data-and-ai-apis) explains how to integrate the bot with the Data API.
 
 ### C) Running the AI API
 Note: As with the previous section, the instructions in this section are for running the backend locally. Unlike the Data API, however, the AI API does not need access to any external resources (like a database), so there is no need to configure a `.env` file.
@@ -92,9 +92,9 @@ Note: As with the previous section, the instructions in this section are for run
   ```
   flask run
   ```
-* The Flask application for the AI API should be up and running. However, the bot won't be able to talk to the application just yet. [Section D](#d\)-integrating-the-bot-with-the-data-api-and-server-api) explains how to integrate the bot with the Data API.
+* The Flask application for the AI API should be up and running. However, the bot won't be able to talk to the application just yet. [Section D](#d\)-integrating-the-bot-with-the-data-and-ai-apis) explains how to integrate the bot with the Data API.
 
-### D) Integrating the bot with the Data API and AI APIs
+### D) Integrating the bot with the Data and AI APIs
 * Generate an API key using a method of your choice. For example, you could use the `token_hex()` method of Python's `secrets` module to generate a random hexadecimal text string to use as the API key. Once you have an API key, use Python's `hashlib` module to hash the key using SHA256 as follows (where `key` is your API key and should be a string):
   ```python
   hashed_key = hashlib.sha256(key.enocode('utf-8')).hexdigest()
