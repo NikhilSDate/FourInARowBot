@@ -5,14 +5,24 @@ This project is an open-source Discord bot that lets Discord users play the popu
 The project has three parts, all written in Python:
 
 * **The Discord bot code** (located in the [bot](/bot) directory): The code for the bot uses the [discord.py](https://discordpy.readthedocs.io/en/stable/) library.
-* **The Data API** (located in the [server](/server) directory) : The Data API uses [Flask](https://flask.palletsprojects.com/en/2.3.x/quickstart/) framework. The Data API interacts with a [MongoDB](https://www.mongodb.com/) database that stores game data. The Discord bot uses the Data API to save completed games to the MongoDB database and to retrieve player stats from the database. 
-* **The AI API**: The AI API also uses the Flask framework. The code for the AI API lives in the [ai_server](/ai_server) directory. The AI API uses the [minimax](https://en.wikipedia.org/wiki/Minimax) algorithm with alpha-beta pruning and iterative deepening to determine a minimax value and move suggestion given a board position. The Discord bot uses the AI API to let human players against the AI. 
+* **The Data API** (located in the [server](/server) directory): The Data API uses [Flask](https://flask.palletsprojects.com/en/2.3.x/quickstart/) framework. The Data API interacts with a [MongoDB](https://www.mongodb.com/) database that stores game data. The Discord bot uses the Data API to save completed games to the MongoDB database and to retrieve player stats from the database. 
+* **The AI API** (located in the [ai_server](/ai_server) directory): The AI API also uses the Flask framework. The AI API uses the [minimax](https://en.wikipedia.org/wiki/Minimax) algorithm with alpha-beta pruning and iterative deepening to determine a minimax value and move suggestion given a board position. The Discord bot uses the AI API to let human players against the AI. 
 
+**[Video Demos](#video-demos)**<br/>
 **[Features](#features)**<br/> 
 **[Self-hosting Instructions](#self-hosting-instructions)**<br/>
-**[Video Demos](#video-demos)**<br/>
 **[Screenshots](#screenshots)**<br/>
 **[Bot Usage](#bot-usage)**<br/>
+
+## Video Demos
+
+### A game between two Discord users
+
+https://github.com/NikhilSDate/FourInARowBot/assets/47920034/8dfe280b-bb10-4135-884b-9693179681fe
+
+### A game between a Discord user and the AI
+
+https://github.com/NikhilSDate/FourInARowBot/assets/47920034/b108a7cd-730a-472d-b9d4-30650663c70f
 
 ## Features
 ### Bot
@@ -40,19 +50,14 @@ only one game can be played at a time in a single channel.
   - The result of the game, and
   - The date and time when the game was completed.
 * The Data API exposes another API endpoint to retrieve stats for a user given their Discord User ID. Stats consist of the number of games the user has won, lost and drawn. Stats can also be queried for games played against a particular opponent, in a particular server or channel, and in a particular date and time range.
-* To protect user data, the Data API is secured using an API key that must be sent as an authorization header with every request. A hashed version of the API key is stored in the MongoDB database. If you want to host this bot yourself, you will have to generate an API key and store it in the database manually (see the [Self-hosting instructions](#self-hosting-instructions) section for more information).
+* To protect user data, the Data API is secured using an API key that must be sent as an authorization header with every request. A hashed version of the API key is stored in the MongoDB database. If you want to host this bot yourself, you will have to generate an API key and store it in the database manually (see the [Self-hosting Instructions](#self-hosting-instructions) section for more information).
 
 ### AI API
 
-* The AI API exposes an API endpoint to get a minimax value and move suggestion for a given game position. A game position consists of the board state and the color whose turn it is to play. An example call to the AI API is as follows:
-  ```
-  <a_api_url>/evaluate?board=001100000200000000000000000000000000000000&color=2
-  ```
-  `board` is the game board encoded bottom-to-top in row-major order. A `0` is an empty cell, a `1` is the color that goes first, and a `2` is the color that goes second. `color` is the color whose turn it is to play (i.e. the color for which the position is to be evaluated). `1` represents the color that goes first and `2` represents that color goes second. 
-
+* The AI API exposes an API endpoint to get a minimax value and move suggestion for a given game position. A game position consists of the board state and the color whose turn it is to play. 
 * The AI API uses [minimax](https://en.wikipedia.org/wiki/Minimax) with alpha-beta pruning and iterative deepening. Iterative deepening means that the AI will first search to depth 1, then depth 2, then depth 3, and so on, instead of directly searching to a preset depth. Iterative deepening offers a number of advantages:
   * The effectiveness of alpha-beta pruning depends on the order in which nodes at a particular depth are searched. Using iterative deepening, the search to depth n can be sped up by examining the nodes at a particular depth in order, from best to worst, of their minimax values from the search to depth n - 1.
-  * Iterative deepening allows a time limit to be set for the AI. If a time limit is set, the AI willreturn the results from the deepest search that completed before the time limit was hit. This means that, given the same time limit, the AI will automatically search deeper when it has more computing power available.
+  * Iterative deepening allows a time limit to be set for the AI. If a time limit is set, the AI will return the results from the deepest search that completed before the time limit was hit. This means that, given the same time limit, the AI will automatically search deeper when it has more computing power available.
 * The AI API can be configured with time and depth limits. The AI stops searching when it hits either the time limit or the depth limit and returns the result of the deepest completed search.
 
 
@@ -65,7 +70,7 @@ To run this bot, you will have to host it yourself. This will involve individual
 * Clone this repository: `git clone https://github.com/NikhilSDate/FourInARowBot.git`
 * Navigate to the `bot` directory. This is where the code for the bot is located
 * Install the requirements: `pip install -r requirements.txt`
-* Fetch your [Discord token](https://www.technobezz.com/how-to-get-a-discord-bot-token/). 
+* Get a [Discord token](https://www.technobezz.com/how-to-get-a-discord-bot-token/). 
 * Create a file with the name `.env` in the `bot` directory. Paste the following line into this file:
   ```
   DISCORD_TOKEN=<your_discord_token>
@@ -128,16 +133,6 @@ Note: As with the previous section, the instructions in this section are for run
   }
   ```
 * Stop the `main.py` script if it is still running from when you ran it in Part A and run it again with `python main.py`. The bot should now be able to talk to the Data and AI APIs.
-  
-## Video Demos
-
-### A game between two Discord users
-
-https://github.com/NikhilSDate/FourInARowBot/assets/47920034/8dfe280b-bb10-4135-884b-9693179681fe
-
-### A game between a Discord user and the AI
-
-https://github.com/NikhilSDate/FourInARowBot/assets/47920034/b108a7cd-730a-472d-b9d4-30650663c70f
 
 ## Screenshots
 
