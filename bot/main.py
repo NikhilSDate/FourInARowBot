@@ -1,8 +1,10 @@
+import asyncio
 import json
 import os
 import random
 from datetime import datetime
 
+import discord
 from discord import Intents
 from discord.ext import commands
 from discord.ext.commands import Context
@@ -10,7 +12,6 @@ from discord.ext.commands import Context
 from dotenv import load_dotenv
 
 from disc.discord_manager import DiscordManager
-from disc.discord_two_player_game_manager import DiscordTwoPlayerGameManager
 from disc.help_command import MyHelp
 from game.statuses import Status, StatusType
 from api_wrapper.data_api import DataAPI
@@ -21,7 +22,8 @@ load_dotenv()
 if __name__ == "__main__":
 
     intents = Intents.all()
-    bot = commands.Bot(command_prefix="!", intents=intents, help_command=MyHelp())
+    bot = commands.Bot(command_prefix="!", intents=intents, help_command=MyHelp(),
+                       activity=discord.Activity(type=discord.ActivityType.listening, name="!help"))
     discord_manager = DiscordManager()
     data_api = DataAPI()
 
@@ -108,3 +110,4 @@ if __name__ == "__main__":
 
     token = os.getenv('DISCORD_TOKEN')
     bot.run(token)
+
