@@ -56,7 +56,7 @@ only one game can be played at a time in a single channel.
 
 * The AI API exposes an API endpoint to get a minimax value and move suggestion for a given game position. A game position consists of the board state and the color whose turn it is to play. 
 * The AI API uses [minimax](https://en.wikipedia.org/wiki/Minimax) with alpha-beta pruning and iterative deepening. Iterative deepening means that the AI will first search to depth 1, then depth 2, then depth 3, and so on, instead of directly searching to a preset depth. Iterative deepening offers a number of advantages:
-  * The effectiveness of alpha-beta pruning depends on the order in which nodes at a particular depth are searched. Using iterative deepening, the search to a depth $$n$$ can be sped up by examining nodes at a particular level in order, from best to worst, of their minimax values calculated during the search to depth $$n - 1$$.
+  * The effectiveness of alpha-beta pruning depends on the order in which nodes at a particular depth are searched. Using iterative deepening, the search to a depth $n$ can be sped up by examining nodes at the same level in order, from best to worst, of their minimax values calculated during the search to depth $n - 1$.
   * Iterative deepening allows a time limit to be set for the AI. If a time limit is set, the AI will return the results from the deepest search that completed before the time limit was hit. This means that, given the same time limit, the AI will automatically search deeper when it has more computing power available.
 * The AI API can be configured with time and depth limits. The AI stops searching when it hits either the time limit or the depth limit and returns the result of the deepest completed search.
 
