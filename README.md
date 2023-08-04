@@ -1,16 +1,16 @@
 # Four in a Row Bot
 
-This project is an open-source Discord bot that lets Discord users play the popular two-player game Four in a Row (called Connect Four by Hasbro) against each other.
+This project is an open-source Discord bot that lets Discord users play the popular two-player game Four in a Row (called Connect Four by Hasbro) against each other or against an AI.  
 
-The project has three parts:
+The project has three parts, all written in Python:
 
-* **The Discord bot code**: The code for the bot uses the [discord.py](https://discordpy.readthedocs.io/en/stable/) library and lives in the [bot](/bot) directory.
-* **The Data API**: The Data API is written in Python using the [Flask](https://flask.palletsprojects.com/en/2.3.x/quickstart/) framework. The code for the Data API lives in the [server](/server) directory. The data API interacts with a [MongoDB](https://www.mongodb.com/) database that stores game data. The Discord bot uses the Data API to save completed games to the MongoDB database and to retrieve player stats from the database. 
-* **The AI API**: The AI API is also written in Python using the Flask framework. The code for the AI API lives in the [ai_server](/ai_server) directory. The AI API uses the minimax algorithm with alpha-beta pruning and iterative deepening to return an evaluation and move suggestion given a game position. The Discord bot uses the AI API to let human players against the AI. 
+* **The Discord bot code** (located in the [bot](/bot) directory): The code for the bot uses the [discord.py](https://discordpy.readthedocs.io/en/stable/) library.
+* **The Data API** (located in the [server](/server) directory) : The Data API uses [Flask](https://flask.palletsprojects.com/en/2.3.x/quickstart/) framework. The Data API interacts with a [MongoDB](https://www.mongodb.com/) database that stores game data. The Discord bot uses the Data API to save completed games to the MongoDB database and to retrieve player stats from the database. 
+* **The AI API**: The AI API also uses the Flask framework. The code for the AI API lives in the [ai_server](/ai_server) directory. The AI API uses the [minimax](https://en.wikipedia.org/wiki/Minimax) algorithm with alpha-beta pruning and iterative deepening to determine a minimax value and move suggestion given a board position. The Discord bot uses the AI API to let human players against the AI. 
 
 **[Features](#features)**<br/> 
 **[Self-hosting Instructions](#self-hosting-instructions)**<br/>
-**[Video Demo](#video-demo)**<br/>
+**[Video Demos](#video-demos)**<br/>
 **[Screenshots](#screenshots)**<br/>
 **[Bot Usage](#bot-usage)**<br/>
 
@@ -20,35 +20,41 @@ The project has three parts:
 * The bot supports multiple simultaneous games across different servers and channels. However, 
 only one game can be played at a time in a single channel.
 * The standard Four in a Row board has 6 rows and 7 columns. Games are won by achieving 4 pieces in a row. The bot 
-  supports games with custom board sizes (users can specify the number of rows and columns they want when creating  a new game).
+  supports games with custom board sizes (users can specify the number of rows and columns they want when creating a new game).
   Users can also specify a custom number of pieces in a row to win the game.
-* By default, the bot randomly chooses which players starts first, but there is also support for the player 
-  initiating the game to chose whether they want to start first or second.
-* A player can resign from a game at any time. This will end the game and give the win to the other player.
+* By default, the bot randomly chooses which players starts first, but the player 
+  initiating the game can also chose whether they want to start first or second.
+* A player can resign a game at any time. This will end the game and give the win to the other player.
 * The bot detects and correctly handles invalid moves (such as a move by a player when it's not their turn, a move 
   in a column that's full, a move by a user who's not a participant in an active game)
-* The bot saves each game to the MongoDB database after the game has completed by calling the backend API. 
+* The bot saves each game to the MongoDB database after the game has completed by calling the Data API. 
 * The bot allows users to view their stats (the number of games they have won, lost, and drawn). 
-* The bot lets human players play against an AI. The AI is quite strong and offers a tough challenge to a casual player. 
+* The bot lets human players play against an AI. The AI is quite strong and offers a tough challenge to casual players. 
 
 ### Data API 
 * The Data API exposes an API endpoint to save games to a MongoDB database. The API saves the following data in the database:
   - The Discord User IDs of the two players who played the game,
   - The IDs of the server and channel in which the game was played,
-  - The board configuration for the game (number of rows, columns, and pieces in a row to win),
+  - The game configuration (number of rows, columns, and pieces in a row to win),
   - The moves played in the game,
   - The result of the game, and
   - The date and time when the game was completed.
-* The Data API exposes another API endpoint to retrieve stats for any user. Stats consist of the number of games the user has won, lost and drawn. Stats can also be queried for games played against a particular opponent, in a particular server or channel, and in a particular date and time range.
+* The Data API exposes another API endpoint to retrieve stats for a user given their Discord User ID. Stats consist of the number of games the user has won, lost and drawn. Stats can also be queried for games played against a particular opponent, in a particular server or channel, and in a particular date and time range.
 * To protect user data, the Data API is secured using an API key that must be sent as an authorization header with every request. A hashed version of the API key is stored in the MongoDB database. If you want to host this bot yourself, you will have to generate an API key and store it in the database manually (see the [Self-hosting instructions](#self-hosting-instructions) section for more information).
 
 ### AI API
 
-* The AI API exposes an API endpoint to get an evaluation and move suggestion for a given game position. A game position consists of the board state and the color of the player whose turn it is to play.
-* The AI API uses minimax with alpha-beta pruning and iterative deepening. Iterative deepening means that the AI will repeatedly search to ever increasing depths starting from 1; that is, it will first search to depth 1, then to depth 2, then depth 3, and so on. Iterative deepening offers a number of advantages:
-  * The effectiveness of alpha-beta pruning depends on the order in which nodes at a particular depth are searched. With iterative deepening, position evaluations from searching to depth n - 1 can be used to improve move ordering at depth n by searching the nodes first at depth n that had the best evaluations at depth n - 1. This speeds up the search at depth n.
-  * Iterative deepening allows a time limit to be set for the AI. The AI will then return the results from the deepest search that completed before the time limit was hit. This means that, given the same time limit, the AI will automatically search deeper when it has more computing power available.
-* The AI API can be configured with time and depth limits. The AI stops searching when it hits either the time limit or the depth limit and returns the result of the deepest completed search.  
+* The AI API exposes an API endpoint to get a minimax value and move suggestion for a given game position. A game position consists of the board state and the color whose turn it is to play. An example call to the AI API is as follows:
+  ```
+  <a_api_url>/evaluate?board=001100000200000000000000000000000000000000&color=2
+  ```
+  `board` is the game board encoded bottom-to-top in row-major order. A `0` is an empty cell, a `1` is the color that goes first, and a `2` is the color that goes second. `color` is the color whose turn it is to play (i.e. the color for which the position is to be evaluated). `1` represents the color that goes first and `2` represents that color goes second. 
+
+* The AI API uses [minimax](https://en.wikipedia.org/wiki/Minimax) with alpha-beta pruning and iterative deepening. Iterative deepening means that the AI will first search to depth 1, then depth 2, then depth 3, and so on, instead of directly searching to a preset depth. Iterative deepening offers a number of advantages:
+  * The effectiveness of alpha-beta pruning depends on the order in which nodes at a particular depth are searched. Using iterative deepening, the search to depth n can be sped up by examining the nodes at a particular depth in order, from best to worst, of their minimax values from the search to depth n - 1.
+  * Iterative deepening allows a time limit to be set for the AI. If a time limit is set, the AI willreturn the results from the deepest search that completed before the time limit was hit. This means that, given the same time limit, the AI will automatically search deeper when it has more computing power available.
+* The AI API can be configured with time and depth limits. The AI stops searching when it hits either the time limit or the depth limit and returns the result of the deepest completed search.
+
 
 ## Self-hosting Instructions
 
