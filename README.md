@@ -1,12 +1,14 @@
 # Four in a Row Bot
 
-This project is an open-source Discord bot that lets Discord users play the popular two-player game Four in a Row (called Connect Four by Hasbro) against each other or against an AI.  
+This project is an open-source Discord bot that lets Discord users play the popular two-player game Four in a Row (called Connect Four by Hasbro) against each other or against an AI. 
+
+![Photo by Kevin  Malik (pexels.com)](media/pexels-kevin-malik-8762743.jpg?raw=true "A Connect Four game (Photo credit: Kevin Malik: https://www.pexels.com/photo/connect-four-toy-on-table-8762743/)")
 
 The project has three parts, all written in Python:
 
 * **The Discord bot code** (located in the [bot](/bot) directory): The code for the bot uses the [discord.py](https://discordpy.readthedocs.io/en/stable/) library.
-* **The Data API** (located in the [server](/server) directory): The Data API uses [Flask](https://flask.palletsprojects.com/en/2.3.x/quickstart/) framework. The Data API interacts with a [MongoDB](https://www.mongodb.com/) database that stores game data. The Discord bot uses the Data API to save completed games to the MongoDB database and to retrieve player stats from the database. 
-* **The AI API** (located in the [ai_server](/ai_server) directory): The AI API also uses the Flask framework. The AI API uses the [minimax](https://en.wikipedia.org/wiki/Minimax) algorithm with alpha-beta pruning and iterative deepening to determine a minimax value and move suggestion given a board position. The Discord bot uses the AI API to let human players against the AI. 
+* **The Data API** (located in the [server](/server) directory): The Data API uses the [Flask](https://flask.palletsprojects.com/en/2.3.x/quickstart/) framework. The Data API interacts with a [MongoDB](https://www.mongodb.com/) database that stores game data. The Discord bot uses the Data API to save completed games to the MongoDB database and to retrieve player stats from the database. 
+* **The AI API** (located in the [ai_server](/ai_server) directory): The AI API also uses the Flask framework. The Discord bot uses the AI API to let human players against the AI. The AI API uses the [minimax](https://en.wikipedia.org/wiki/Minimax) algorithm with alpha-beta pruning and iterative deepening to determine a minimax value and move suggestion given a board position. 
 
 **[Video Demos](#video-demos)**<br/>
 **[Features](#features)**<br/> 
